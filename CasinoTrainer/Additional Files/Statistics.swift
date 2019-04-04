@@ -154,33 +154,18 @@ class Player  /*: NSObject, NSCoding*/ {
     }
 }
 
-class Stats {
+protocol Stats : Codable {
+    var gamesWon: Int { get set }
+    var gamesLost: Int { get set}
+    var winsAndLosses: [Float] { get set }
+    var allStakes: [Float] { get set }
+}
+
+class BlackJackStats : Stats, Codable {
     var gamesWon: Int
     var gamesLost: Int
     var winsAndLosses: [Float]
     var allStakes: [Float]
-    
-    init() {
-        gamesWon = 0
-        gamesLost = 0
-        winsAndLosses = Array<Float>()
-        allStakes = Array<Float>()
-    }
-    init(standard: Int) {
-        gamesWon = standard
-        gamesLost = standard
-        winsAndLosses = [1.0]
-        allStakes = [1.0]
-    }
-    init(won: Int, lost: Int, winAndLose: [Float], stakes: [Float]) {
-        gamesWon = won
-        gamesLost = lost
-        winsAndLosses = winAndLose
-        allStakes = stakes
-    }
-}
-
-class BlackJackStats : Stats {
     var gamesTied: Int
     var hadBlackJack: Int
     var hadTripleSeven: Int
@@ -196,62 +181,68 @@ class BlackJackStats : Stats {
     var doubledDown: Int
     var bankWentBust: Int
     
-    override init() {
+    init() {
+        gamesWon = 0
+        gamesLost = 0
+        winsAndLosses = [Float]()
+        allStakes = [Float]()
         gamesTied = 0
         hadBlackJack = 0
         hadTripleSeven = 0
         wonWithBlackJack = 0
         bankHadBlackJack = 0
         bankWonWithBlackJack = 0
-        insurances = [0]
+        insurances = [Float]()
         insurancePayouts = 0
-        bustBets = [0]
+        bustBets = [Float]()
         bustBetsWon = 0
         doubledDown = 0
         bankWentBust = 0
         tookInsurance = 0
         betOnBust = 0
-        super.init()
     }
-    override init(standard: Int) {
+    init(standard: Int) {
+        gamesWon = standard
+        gamesLost = standard
+        winsAndLosses = [Float(standard)]
+        allStakes = [Float(standard)]
         gamesTied = standard
         hadBlackJack = standard
         hadTripleSeven = standard
         wonWithBlackJack = standard
         bankHadBlackJack = standard
         bankWonWithBlackJack = standard
-        insurances = [1.0]
+        insurances = [Float(standard)]
         insurancePayouts = standard
-        bustBets = [1.0]
+        bustBets = [Float(standard)]
         bustBetsWon = standard
         doubledDown = standard
         bankWentBust = standard
         tookInsurance = standard
         betOnBust = standard
-        super.init(standard: standard)
-    }
-    init(statData: [String: Int], stakes: [Float], winAndLose: [Float], insurances: [Float], bustBets:[Float]) {
-        gamesTied = statData["games tied"]!
-        hadBlackJack = statData["had BlackJack"]!
-        hadTripleSeven = statData["had Triple Seven"]!
-        wonWithBlackJack = statData["won with Black Jack"]!
-        bankHadBlackJack = statData["bank had Black Jack"]!
-        bankWonWithBlackJack = statData["bank won with Black Jack"]!
-        bankWentBust = statData["bank went bust"]!
-        bustBetsWon = statData["bust bets won"]!
-        insurancePayouts = statData["insurance payouts"]!
-        doubledDown = statData["doubled down"]!
-        betOnBust = statData["bet on bust"]!
-        tookInsurance = statData["took insurance"]!
-        self.insurances = insurances
-        self.bustBets = bustBets
-        super.init(won: statData["games won"]!, lost: statData["games lost"]!, winAndLose: winAndLose, stakes: stakes)
     }
     
-    func BlackJackStatsToDictionary() -> [String: Int] {
-        let dic = ["games won":gamesWon, "games lost":gamesLost, "games tied":gamesTied, "had BlackJack": hadBlackJack, "had Triple Seven": hadTripleSeven, "won with Black Jack":wonWithBlackJack, "bank had Black Jack": bankHadBlackJack, "bank won with Black Jack": bankWonWithBlackJack, "bank went bust": bankWentBust, "bet on bust": betOnBust, "bust bets won": bustBetsWon, "took insurance": tookInsurance, "insurance payouts": insurancePayouts, "doubled down": doubledDown]
-        return dic
+    enum CodingKeys: String, CodingKey {
+        case gamesWon = "GamesWon"
+        case gamesLost = "GamesLost"
+        case winsAndLosses = "WinsAndLosses"
+        case allStakes = "AllStakes"
+        case gamesTied = "GamesTied"
+        case hadBlackJack = "HadBlackJack"
+        case hadTripleSeven = "HadTripleSeven"
+        case wonWithBlackJack = "WonWithBlackJack"
+        case bankHadBlackJack = "BankHadBlackJack"
+        case bankWonWithBlackJack = "BankWonWithBlackJack"
+        case insurances = "Insurances"
+        case insurancePayouts = "InsurancePayouts"
+        case tookInsurance = "TookInsurance"
+        case bustBets = "BustBets"
+        case bustBetsWon = "BustBetsWon"
+        case betOnBust = "BetOnBust"
+        case doubledDown = "DoubledDown"
+        case bankWentBust = "BankWentBust"
     }
+    
 }
 struct AbsoluteAndPercent {
     let name: String
