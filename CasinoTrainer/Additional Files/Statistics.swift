@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class Player  /*: NSObject, NSCoding*/ {
+class Player : Codable {
     
     var playerName: String
     var initialCapital: Float
@@ -31,27 +31,14 @@ class Player  /*: NSObject, NSCoding*/ {
         bjStats = BlackJackStats()
         rouStats = RouletteStats()
     }
+    enum CodingKeys : String, CodingKey {
+        case playerName = "PlayerName"
+        case initialCapital = "InitialCapital"
+        case balance = "Balance"
+        case bjStats = "BlackjackStats"
+        case rouStats = "RouletteStats"
+    }
     
-    init(name: String, capital:Float, balance: Float, bjStatData: [String:Int], rouStatData: [String:[Int]], otherArrays: [String:[Float]]) {
-        self.playerName = name
-        self.initialCapital = capital
-        self.balance = balance
-        bjStats = BlackJackStats(statData: bjStatData, stakes: otherArrays["Black Jack stakes"]!, winAndLose: otherArrays["Black Jack WinsAndLosses"]!, insurances: otherArrays["Black Jack insurances"]!, bustBets: otherArrays["Black Jack bust bets"]!)
-        rouStats = RouletteStats(statData: rouStatData, winAndLose: otherArrays["Roulette WinsAndLosses"]!, stakes: otherArrays["Roulette stakes"]!)
-        
-    }
-    /*
-    func encode(with aCoder: NSCoder) {
-        
-    }
-    required init?(coder aDecoder: NSCoder) {
-        self.playerName = aDecoder.decodeObject(forKey:"name") as! String
-    }
-*/
-    func arraysToDictionary() -> [String: [Float]] {
-        let dic = [ "Black Jack WinsAndLosses": bjStats.winsAndLosses, "Black Jack stakes": bjStats.allStakes, "Black Jack insurances": bjStats.insurances, "Black Jack bust bets": bjStats.bustBets, "Roulette WinsAndLosses": rouStats.winsAndLosses, "Roulette stakes": rouStats.allStakes]
-        return dic
-    }
     func endBlackJack(outcome: BlackJackGameOver) {
         switch outcome.winOrLose {
         case .lost:
@@ -303,6 +290,10 @@ struct MetaData {
 }
 
 class RouletteStats : Stats {
+    var gamesWon: Int
+    var gamesLost: Int
+    var winsAndLosses: [Float]
+    var allStakes: [Float]
     var numberOfOutsideGames: Int
     var numberOfInsideGames: Int
     var wonOutside: Int
@@ -322,7 +313,11 @@ class RouletteStats : Stats {
     var dozen: [Int]
     var sixLine: [Int]
     var street: [Int]
-    override init() {
+    init() {
+        gamesWon = 0
+        gamesLost = 0
+        winsAndLosses = [Float]()
+        allStakes = [Float]()
         numberOfInsideGames = 0
         numberOfOutsideGames = 0
         wonInside = 0
@@ -342,34 +337,31 @@ class RouletteStats : Stats {
         dozen = [0,0]
         sixLine = [0,0]
         street = [0,0]
-        super.init()
-    }
-    init(statData: [String:[Int]], winAndLose: [Float], stakes: [Float]) {
-        numberOfInsideGames = statData["number of inside games"]![0]
-        numberOfOutsideGames = statData["number of outside games"]![0]
-        wonOutside = statData["won outside"]![0]
-        wonInside = statData["won inside"]![0]
-        even = statData["even"]!
-        odd = statData["odd"]!
-        low = statData["low"]!
-        high = statData["high"]!
-        red = statData["red"]!
-        black = statData["black"]!
-        straightUp = statData["straight up"]!
-        split = statData["split"]!
-        corner = statData["corner"]!
-        firstThree = statData["first three"]!
-        firstFour = statData["first four"]!
-        column = statData["column"]!
-        dozen = statData["dozen"]!
-        sixLine = statData["sixLine"]!
-        street = statData["street"]!
-        super.init(won: statData["games won"]![0], lost: statData["games lost"]![0], winAndLose: winAndLose, stakes: stakes)
     }
     
-    func rouletteStatToDictionary() -> [String: [Int]] {
-        let dic = ["games won": [gamesWon], "games lost":[gamesLost], "number of inside games": [numberOfInsideGames], "number of outside games": [numberOfOutsideGames], "won outside": [wonOutside], "won inside": [wonInside], "even": even, "odd": odd, "low": low, "high":high, "red": red, "black": black, "straight up": straightUp, "split": split, "corner": corner, "first three": firstThree, "first four": firstFour, "column": column, "dozen": dozen, "sixLine": sixLine, "street": street ]
-        return dic
+    enum CodingKeys: String, CodingKey {
+        case gamesWon = "GamesWon"
+        case gamesLost = "GamesLost"
+        case winsAndLosses = "WinsAndLosses"
+        case allStakes = "AllStakes"
+        case numberOfOutsideGames = "NumberOfOutsideGames"
+        case numberOfInsideGames = "NumberOfInsideGames"
+        case wonOutside = "WonOutside"
+        case wonInside = "WonInside"
+        case even = "Even"
+        case odd = "Odd"
+        case low = "Low"
+        case high = "High"
+        case red = "Red"
+        case black = "Black"
+        case straightUp = "StraightUp"
+        case split = "Split"
+        case corner = "Corner"
+        case firstThree = "FirstThree"
+        case firstFour = "FirstFour"
+        case column = "Column"
+        case dozen = "Dozen"
+        case sixLine = "SixLine"
+        case street = "Street"
     }
-    
 }
