@@ -367,9 +367,9 @@ class RouletteBetViewController: UIViewController {
                 }
                 bet = InsideBet(type: type, number: selectedNumber, def: splitNumber)
             }
-            performSegue(withIdentifier: "returnToTable", sender: self)
-            //self.navigationController?.popViewController(animated: false)
-            self.navigationController?.viewControllers.remove(at: 1)
+            let rouVC: RouletteController = UIStoryboard(name: "Roulette", bundle: nil).instantiateInitialViewController() as! RouletteController
+            rouVC.bet = bet
+            self.navigationController?.popToViewController(rouVC, animated: true)
             
         }
         

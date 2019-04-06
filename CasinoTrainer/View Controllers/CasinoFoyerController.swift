@@ -53,6 +53,10 @@ class CasinoFoyerController: UIViewController {
         performSegue(withIdentifier: "showStatistics", sender: self)
 
     }
+    @IBAction func goToStatistics(_ sender: UIButton) {
+        let statVC: StatisticsChoiceController = UIStoryboard(name: "Statistics", bundle: nil).instantiateInitialViewController() as! StatisticsChoiceController
+        self.navigationController?.pushViewController(statVC, animated: true)
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: false)

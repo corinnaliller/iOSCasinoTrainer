@@ -55,6 +55,12 @@ class StatisticsChoiceController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        do {
+            guest = try DataSaver.retrieveGuest()
+        }
+        catch {
+            print(error.localizedDescription)
+        }
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
