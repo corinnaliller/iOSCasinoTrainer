@@ -66,10 +66,7 @@ class BlackJackController: UIViewController {
         cards = [[iBank1,iBank2,iBank3,iBank4,iBank5,iBank6],[iSplit11,iSplit12,iSplit13,iSplit14,iSplit15,iSplit16],[iSplit21,iSplit22,iSplit23,iSplit24,iSplit25,iSplit26]]
         pointLabels = [lPointsBank,lPoints1,lPoints2]
         setForNewGame()
-        if guest != nil {
-            slStakes.maximumValue = guest!.balance
-        }
-        lBalance.text = "\(Int(guest?.balance ?? 100)) $"
+        
     }
     private func setForNewGame() {
         hideAllCards()
@@ -388,11 +385,19 @@ class BlackJackController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        do {
+            guest = try DataSaver.retrieveGuest()
+            slStakes.maximumValue = guest!.balance
+            lBalance.text = "\(Int(guest!.balance)) $"
+        }
+        catch {
+            print(error.localizedDescription)
+        }
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        DataSaver.saveGuest(guest: guest!)
+        try? DataSaver.saveGuest(guest: guest!)
     }
 
 }

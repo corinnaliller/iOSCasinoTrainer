@@ -53,6 +53,6 @@ class BlackJackStatisticsController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        DataSaver.saveGuest(guest: guest!)
+        try? DataSaver.saveGuest(guest: guest!)
     }
 }

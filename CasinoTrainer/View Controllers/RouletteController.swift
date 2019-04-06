@@ -25,7 +25,7 @@ class RouletteController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         //print(guest?.playerName)
-        lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance)) $"
+        
         lResult.isHidden = true
         lWin.isHidden = true
         if bet == nil {
@@ -73,11 +73,18 @@ class RouletteController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        do {
+            guest = try DataSaver.retrieveGuest()
+            lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance)) $"
+        }
+        catch {
+            print(error.localizedDescription)
+        }
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        DataSaver.saveGuest(guest: guest!)
+        try? DataSaver.saveGuest(guest: guest!)
     }
     
     @IBAction func rienNeVasPlus(_ sender: UIButton) {

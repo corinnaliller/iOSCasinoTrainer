@@ -28,6 +28,8 @@
 		470CD50921A16E3100981833 /* RouletteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470CD50821A16E3100981833 /* RouletteController.swift */; };
 		470CD50B21A1707F00981833 /* BlackJackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470CD50A21A1707F00981833 /* BlackJackController.swift */; };
 		470CD50D21A1709400981833 /* BlackJackStatisticsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470CD50C21A1709400981833 /* BlackJackStatisticsController.swift */; };
+		4717734922587EEC00C2594C /* Blackjack.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4717734822587EEC00C2594C /* Blackjack.storyboard */; };
+		4717734B2258815900C2594C /* Roulette.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4717734A2258815900C2594C /* Roulette.storyboard */; };
 		4717E77721A5788B0064908D /* ModelControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4717E77621A5788B0064908D /* ModelControllers.swift */; };
 		471AB40A21A30979003AA1B3 /* StatisticsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471AB40921A30979003AA1B3 /* StatisticsCell.swift */; };
 		47AC81AD21A1898600A0E1C1 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AC81AC21A1898600A0E1C1 /* Models.swift */; };
@@ -81,6 +83,8 @@
 		470CD50821A16E3100981833 /* RouletteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouletteController.swift; sourceTree = "<group>"; };
 		470CD50A21A1707F00981833 /* BlackJackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackJackController.swift; sourceTree = "<group>"; };
 		470CD50C21A1709400981833 /* BlackJackStatisticsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackJackStatisticsController.swift; sourceTree = "<group>"; };
+		4717734822587EEC00C2594C /* Blackjack.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Blackjack.storyboard; sourceTree = "<group>"; };
+		4717734A2258815900C2594C /* Roulette.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Roulette.storyboard; sourceTree = "<group>"; };
 		4717E77621A5788B0064908D /* ModelControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelControllers.swift; sourceTree = "<group>"; };
 		471AB40921A30979003AA1B3 /* StatisticsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsCell.swift; sourceTree = "<group>"; };
 		47AC81AC21A1898600A0E1C1 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -161,7 +165,7 @@
 				470CD4D621A16C8500981833 /* AppDelegate.swift */,
 				349BE82221E624B8004C22BF /* Table Cells */,
 				47AC81B021A18A0D00A0E1C1 /* View Controllers */,
-				470CD4DA21A16C8500981833 /* Main.storyboard */,
+				4717734722587ECA00C2594C /* Storyboards */,
 				47AC81B121A18A1E00A0E1C1 /* Additional Files */,
 				470CD4DD21A16C8D00981833 /* Assets.xcassets */,
 				470CD4DF21A16C8D00981833 /* LaunchScreen.storyboard */,
@@ -186,6 +190,16 @@
 				470CD4F821A16C8D00981833 /* Info.plist */,
 			);
 			path = CasinoTrainerUITests;
+			sourceTree = "<group>";
+		};
+		4717734722587ECA00C2594C /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				470CD4DA21A16C8500981833 /* Main.storyboard */,
+				4717734822587EEC00C2594C /* Blackjack.storyboard */,
+				4717734A2258815900C2594C /* Roulette.storyboard */,
+			);
+			path = Storyboards;
 			sourceTree = "<group>";
 		};
 		47AC81B021A18A0D00A0E1C1 /* View Controllers */ = {
@@ -322,7 +336,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				470CD4E121A16C8D00981833 /* LaunchScreen.storyboard in Resources */,
+				4717734922587EEC00C2594C /* Blackjack.storyboard in Resources */,
 				470CD4DE21A16C8D00981833 /* Assets.xcassets in Resources */,
+				4717734B2258815900C2594C /* Roulette.storyboard in Resources */,
 				470CD4DC21A16C8500981833 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

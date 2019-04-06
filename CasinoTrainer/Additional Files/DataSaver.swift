@@ -13,15 +13,19 @@ enum SavingKeys : String {
 enum CasinoError : Error {
     case guestNotFound
     case guestLoading
+    case guestSavingError
 }
 
 class DataSaver {
     
-    static func saveGuest(guest: Player) {
+    static func saveGuest(guest: Player) throws {
         let encoder = JSONEncoder()
         let defaults = UserDefaults.standard
         if let encoded = try? encoder.encode(guest) {
             defaults.set(encoded, forKey: SavingKeys.player.rawValue)
+        }
+        else {
+            throw CasinoError.guestSavingError
         }
         defaults.synchronize()
     }

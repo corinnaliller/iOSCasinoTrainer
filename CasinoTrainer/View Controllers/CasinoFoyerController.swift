@@ -37,6 +37,14 @@ class CasinoFoyerController: UIViewController {
             table.guest = self.guest
         }
     }
+    @IBAction func goToRoulette(_ sender: UIButton) {
+        let rouletteVC: RouletteController = UIStoryboard(name: "Roulette", bundle: nil).instantiateInitialViewController() as! RouletteController
+        self.navigationController?.pushViewController(rouletteVC, animated: true)
+    }
+    @IBAction func goToBlackJack(_ sender: UIButton) {
+        let blackJackVC: BlackJackController = UIStoryboard(name: "Blackjack", bundle: nil).instantiateInitialViewController() as! BlackJackController
+        self.navigationController?.pushViewController(blackJackVC, animated: true)
+    }
     @IBAction func showStatistics(_ sender: UIButton) {
         print("\(guest?.playerName ?? "Nobody")")
         print("\(guest?.bjStats.gamesWon ?? 0)")
@@ -52,7 +60,7 @@ class CasinoFoyerController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        DataSaver.saveGuest(guest: guest!)
+        try? DataSaver.saveGuest(guest: guest!)
     }
 }
 
