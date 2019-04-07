@@ -20,7 +20,7 @@ class Player : Codable {
         playerName = "Placeholder"
         balance = 10
         initialCapital = 20
-        bjStats = BlackJackStats(standard: 1)
+        bjStats = BlackJackStats()
         rouStats = RouletteStats()
     }
     
@@ -45,14 +45,14 @@ class Player : Codable {
             bjStats.gamesLost += 1
             bjStats.winsAndLosses.append(-outcome.stakesMoney)
         case .tie:
-            bjStats.gamesTied += 1
+            bjStats.outcomes[BlackJackOutcomes.gamesTied]! += 1
             bjStats.winsAndLosses.append(0)
         case .won:
             bjStats.gamesWon += 1
             bjStats.winsAndLosses.append(outcome.prizeMoney)
         case .bjwon:
             bjStats.gamesWon += 1
-            bjStats.wonWithBlackJack += 1
+            bjStats.outcomes[BlackJackOutcomes.wonWithBlackJack]! += 1
             bjStats.winsAndLosses.append(outcome.prizeMoney)
         }
         balance += outcome.prizeMoney + outcome.insurancePayout + outcome.bustBetPayout
@@ -60,36 +60,38 @@ class Player : Codable {
         bjStats.bustBets.append(outcome.bustBetPayout)
         if outcome.tookInsurance {
             balance += outcome.insurancePayout
-            bjStats.tookInsurance += 1
+            bjStats.outcomes[BlackJackOutcomes.tookInsurance]! += 1
             if outcome.insurancePayout > 0 {
-                bjStats.insurancePayouts += 1
+                bjStats.outcomes[BlackJackOutcomes.insuranceWasPaidOut]! += 1
             }
         }
         if outcome.betOnBust {
             balance += outcome.bustBetPayout
-            bjStats.betOnBust += 1
+            bjStats.outcomes[BlackJackOutcomes.betOnBust]! += 1
             if outcome.bustBetPayout > 0 {
-                bjStats.bustBetsWon += 1
+                bjStats.outcomes[BlackJackOutcomes.bankWentBust]! += 1
             }
         }
         if outcome.hadBlackJack {
-            bjStats.hadBlackJack += 1
+            bjStats.outcomes[BlackJackOutcomes.hadBlackJack]! += 1
         }
         if outcome.hadTripleSeven {
-            bjStats.hadTripleSeven += 1
+            bjStats.outcomes[BlackJackOutcomes.hadTripleSeven]! += 1
         }
         if outcome.bankHadBlackJack {
-            bjStats.bankHadBlackJack += 1
+            bjStats.outcomes[BlackJackOutcomes.bankHadBlackJack]! += 1
             if outcome.winOrLose == Status.lost {
-                bjStats.bankWonWithBlackJack += 1
+                bjStats.outcomes[BlackJackOutcomes.bankWonWithBlackJack]! += 1
             }
         }
-        
+        if outcome.wentBust {
+            bjStats.outcomes[BlackJackOutcomes.playerWentBust]! += 1
+        }
         if outcome.doubledDown {
-            bjStats.doubledDown += 1
+            bjStats.outcomes[BlackJackOutcomes.doubledDown]! += 1
         }
         if outcome.bankWentBust {
-            bjStats.bankWentBust += 1
+            bjStats.outcomes[BlackJackOutcomes.bankWentBust]! += 1
         }
     }
     func endRoulette(outcome: RouletteGameOver) {
@@ -131,66 +133,53 @@ protocol Stats : Codable {
     var winsAndLosses: [Float] { get set }
     var allStakes: [Float] { get set }
 }
+enum BlackJackOutcomes : String, Codable {
+    case gamesTied = "GamesTied"
+    case hadBlackJack = "HadBlackJack"
+    case hadTripleSeven = "HadTripleSeven"
+    case wonWithBlackJack = "WonWithBlackJack"
+    case bankHadBlackJack = "BankHadBlackJack"
+    case bankWonWithBlackJack = "BankWonWithBlackJack"
+    case insuranceWasPaidOut = "InsuranceWasPaidOut"
+    case tookInsurance = "TookInsurance"
+    case betOnBust = "BetOnBust"
+    case bustBetsWon = "BustBetsWon"
+    case doubledDown = "DoubledDown"
+    case bankWentBust = "BankWentBust"
+    case playerWentBust = "PlayerWentBust"
+}
 
 class BlackJackStats : Stats, Codable {
     var gamesWon: Int
     var gamesLost: Int
     var winsAndLosses: [Float]
     var allStakes: [Float]
-    var gamesTied: Int
-    var hadBlackJack: Int
-    var hadTripleSeven: Int
-    var wonWithBlackJack: Int
-    var bankHadBlackJack: Int
-    var bankWonWithBlackJack: Int
+    var outcomes: [BlackJackOutcomes: Int]
     var insurances: [Float]
-    var insurancePayouts: Int
-    var tookInsurance: Int
     var bustBets: [Float]
-    var bustBetsWon: Int
-    var betOnBust: Int
-    var doubledDown: Int
-    var bankWentBust: Int
     
     init() {
         gamesWon = 0
         gamesLost = 0
         winsAndLosses = [Float]()
         allStakes = [Float]()
-        gamesTied = 0
-        hadBlackJack = 0
-        hadTripleSeven = 0
-        wonWithBlackJack = 0
-        bankHadBlackJack = 0
-        bankWonWithBlackJack = 0
         insurances = [Float]()
-        insurancePayouts = 0
         bustBets = [Float]()
-        bustBetsWon = 0
-        doubledDown = 0
-        bankWentBust = 0
-        tookInsurance = 0
-        betOnBust = 0
-    }
-    init(standard: Int) {
-        gamesWon = standard
-        gamesLost = standard
-        winsAndLosses = [Float(standard)]
-        allStakes = [Float(standard)]
-        gamesTied = standard
-        hadBlackJack = standard
-        hadTripleSeven = standard
-        wonWithBlackJack = standard
-        bankHadBlackJack = standard
-        bankWonWithBlackJack = standard
-        insurances = [Float(standard)]
-        insurancePayouts = standard
-        bustBets = [Float(standard)]
-        bustBetsWon = standard
-        doubledDown = standard
-        bankWentBust = standard
-        tookInsurance = standard
-        betOnBust = standard
+        outcomes = [
+            BlackJackOutcomes.gamesTied: 0,
+            BlackJackOutcomes.hadBlackJack: 0,
+            BlackJackOutcomes.hadTripleSeven: 0,
+            BlackJackOutcomes.wonWithBlackJack: 0,
+            BlackJackOutcomes.bankHadBlackJack: 0,
+            BlackJackOutcomes.bankWonWithBlackJack: 0,
+            BlackJackOutcomes.insuranceWasPaidOut: 0,
+            BlackJackOutcomes.tookInsurance: 0,
+            BlackJackOutcomes.betOnBust: 0,
+            BlackJackOutcomes.bustBetsWon: 0,
+            BlackJackOutcomes.doubledDown: 0,
+            BlackJackOutcomes.bankWentBust: 0,
+            BlackJackOutcomes.playerWentBust: 0
+        ]
     }
     
     enum CodingKeys: String, CodingKey {
@@ -198,20 +187,9 @@ class BlackJackStats : Stats, Codable {
         case gamesLost = "GamesLost"
         case winsAndLosses = "WinsAndLosses"
         case allStakes = "AllStakes"
-        case gamesTied = "GamesTied"
-        case hadBlackJack = "HadBlackJack"
-        case hadTripleSeven = "HadTripleSeven"
-        case wonWithBlackJack = "WonWithBlackJack"
-        case bankHadBlackJack = "BankHadBlackJack"
-        case bankWonWithBlackJack = "BankWonWithBlackJack"
+        case outcomes = "GamesTied"
         case insurances = "Insurances"
-        case insurancePayouts = "InsurancePayouts"
-        case tookInsurance = "TookInsurance"
         case bustBets = "BustBets"
-        case bustBetsWon = "BustBetsWon"
-        case betOnBust = "BetOnBust"
-        case doubledDown = "DoubledDown"
-        case bankWentBust = "BankWentBust"
     }
     
 }
@@ -270,18 +248,6 @@ struct MetaData {
         self.name = text
         self.number = no
         self.numberString = "\(no) $"
-    }
-}
-class WinAndLose : Codable {
-    var win: Int
-    var lose: Int
-    init() {
-        win = 0
-        lose = 0
-    }
-    enum CodingKeys: String, CodingKey {
-        case win = "win"
-        case lose = "lose"
     }
 }
 

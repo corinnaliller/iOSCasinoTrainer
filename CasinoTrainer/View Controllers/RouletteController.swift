@@ -28,6 +28,18 @@ class RouletteController: UIViewController {
         
         lResult.isHidden = true
         lWin.isHidden = true
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        do {
+            guest = try DataSaver.retrieveGuest()
+            lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance)) $"
+        }
+        catch {
+            print(error.localizedDescription)
+        }
         if bet == nil {
             bRienNeVasPlus.isHidden = true
             lBet.text = "No bet selected"
@@ -70,17 +82,6 @@ class RouletteController: UIViewController {
             }
         }
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
-        do {
-            guest = try DataSaver.retrieveGuest()
-            lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance)) $"
-        }
-        catch {
-            print(error.localizedDescription)
-        }
-    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
@@ -89,7 +90,6 @@ class RouletteController: UIViewController {
     
     @IBAction func rienNeVasPlus(_ sender: UIButton) {
         if bet != nil && sender.title(for: .normal) == "rien ne vas plus" {
-            self.navigationController?.viewControllers.remove(at: 1)
             bSelectBet.isHidden = true
             slStakes.isHidden = true
             sender.setTitle("Play again", for: .normal)

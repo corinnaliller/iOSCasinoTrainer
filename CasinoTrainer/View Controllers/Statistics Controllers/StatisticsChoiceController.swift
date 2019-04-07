@@ -17,7 +17,7 @@ class StatisticsChoiceController: UIViewController {
         // Do any additional setup after loading the view.
     }
     @IBAction func goToTable(_ sender: UIButton) {
-        let bjgames = guest!.bjStats.gamesTied+guest!.bjStats.gamesLost+guest!.bjStats.gamesWon
+        let bjgames = guest!.bjStats.outcomes[BlackJackOutcomes.gamesTied]!+guest!.bjStats.gamesLost+guest!.bjStats.gamesWon
         let rougames = guest!.rouStats.gamesWon+guest!.rouStats.gamesLost
         switch sender.tag {
         case 1:

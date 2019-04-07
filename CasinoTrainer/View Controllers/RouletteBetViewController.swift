@@ -367,10 +367,11 @@ class RouletteBetViewController: UIViewController {
                 }
                 bet = InsideBet(type: type, number: selectedNumber, def: splitNumber)
             }
-            let rouVC: RouletteController = UIStoryboard(name: "Roulette", bundle: nil).instantiateInitialViewController() as! RouletteController
+            let index = self.navigationController?.viewControllers.count
+            let rouVC: RouletteController = self.navigationController?.viewControllers[index!-2] as! RouletteController
             rouVC.bet = bet
             rouVC.guest = guest
-            self.navigationController?.popToViewController(rouVC, animated: true)
+            self.navigationController?.popViewController(animated: true)
         }
         
     }

@@ -53,7 +53,6 @@
                                         </state>
                                         <connections>
                                             <action selector="goToStatistics:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Bdn-Ht-dG6"/>
-                                            <action selector="showStatistics:" destination="BYZ-38-t0r" eventType="touchUpInside" id="K18-OW-Bgb"/>
                                         </connections>
                                     </button>
                                 </subviews>
