@@ -369,22 +369,10 @@ class RouletteBetViewController: UIViewController {
             }
             let rouVC: RouletteController = UIStoryboard(name: "Roulette", bundle: nil).instantiateInitialViewController() as! RouletteController
             rouVC.bet = bet
+            rouVC.guest = guest
             self.navigationController?.popToViewController(rouVC, animated: true)
-            
         }
         
-    }
-    
-    
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.destination is RouletteController {
-            let table = segue.destination as! RouletteController
-            table.bet = self.bet
-            table.guest = self.guest
-        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

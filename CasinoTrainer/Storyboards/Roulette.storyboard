@@ -644,8 +644,8 @@
                                     <action selector="selectBetType:" destination="z86-IN-vUi" eventType="valueChanged" id="4YD-s9-77b"/>
                                 </connections>
                             </segmentedControl>
-                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="pLw-Dc-tRg">
-                                <rect key="frame" x="75" y="551" width="37" height="64"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="pLw-Dc-tRg">
+                                <rect key="frame" x="75" y="553" width="37" height="64"/>
                                 <subviews>
                                     <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Dn-e2-UYg">
                                         <rect key="frame" x="0.0" y="0.0" width="37" height="28"/>
@@ -732,7 +732,6 @@
                         <outlet property="outsideStackView" destination="ifV-mj-QiS" id="MUc-Vb-8qV"/>
                         <outlet property="split1" destination="7Dn-e2-UYg" id="jwI-Qt-60C"/>
                         <outlet property="split2" destination="dSc-4U-7q3" id="REc-Ea-z8Q"/>
-                        <segue destination="wyv-YJ-bg2" kind="push" identifier="returnToTable" id="KPO-vc-r2Y"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EVq-rH-Gum" userLabel="First Responder" sceneMemberID="firstResponder"/>

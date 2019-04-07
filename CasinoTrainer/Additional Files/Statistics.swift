@@ -93,49 +93,33 @@ class Player : Codable {
         }
     }
     func endRoulette(outcome: RouletteGameOver) {
-        let winOrLose: Int
         if outcome.outcome {
             rouStats.gamesWon += 1
             balance += outcome.prize
-            winOrLose = 0
         }
         else {
             rouStats.gamesLost += 1
-            winOrLose = 1
         }
         rouStats.winsAndLosses.append(outcome.prize)
         rouStats.allStakes.append(outcome.stakes)
-        if outcome.bet is OutsideBet {
+        if let outside = outcome.bet as? OutsideBet {
             rouStats.numberOfOutsideGames += 1
-            let outside = outcome.bet as! OutsideBet
             if outcome.outcome {
                 rouStats.wonOutside += 1
+                rouStats.outsideOutcomes[outside.type]![0] += 1
             }
-            switch outside.type {
-            case .black: rouStats.black[winOrLose] += 1
-            case .red: rouStats.red[winOrLose] += 1
-            case .low: rouStats.low[winOrLose] += 1
-            case .high: rouStats.high[winOrLose] += 1
-            case .even: rouStats.even[winOrLose] += 1
-            case .odd: rouStats.odd[winOrLose] += 1
+            else {
+                rouStats.outsideOutcomes[outside.type]![1] += 1
             }
         }
-        else if outcome.bet is InsideBet {
+        else if let inside = outcome.bet as? InsideBet {
             rouStats.numberOfInsideGames += 1
-            let inside = outcome.bet as! InsideBet
             if outcome.outcome {
                 rouStats.wonInside += 1
+                rouStats.insideOutcomes[inside.type]![0] += 1
             }
-            switch inside.type {
-            case .straightUp: rouStats.straightUp[winOrLose] += 1
-            case .split: rouStats.split[winOrLose] += 1
-            case .column: rouStats.column[winOrLose] += 1
-            case .corner: rouStats.corner[winOrLose] += 1
-            case .street: rouStats.street[winOrLose] += 1
-            case .sixLine: rouStats.sixLine[winOrLose] += 1
-            case .dozen: rouStats.dozen[winOrLose] += 1
-            case .firstThree: rouStats.firstThree[winOrLose] += 1
-            case .firstFour: rouStats.firstFour[winOrLose] += 1
+            else {
+                rouStats.insideOutcomes[inside.type]![1] += 1
             }
         }
     }
@@ -288,7 +272,18 @@ struct MetaData {
         self.numberString = "\(no) $"
     }
 }
-
+class WinAndLose : Codable {
+    var win: Int
+    var lose: Int
+    init() {
+        win = 0
+        lose = 0
+    }
+    enum CodingKeys: String, CodingKey {
+        case win = "win"
+        case lose = "lose"
+    }
+}
 
 class RouletteStats : Stats {
     var gamesWon: Int
@@ -299,21 +294,9 @@ class RouletteStats : Stats {
     var numberOfInsideGames: Int
     var wonOutside: Int
     var wonInside: Int
-    var even: [Int]
-    var odd: [Int]
-    var low: [Int]
-    var high: [Int]
-    var red: [Int]
-    var black: [Int]
-    var straightUp: [Int]
-    var split: [Int]
-    var corner: [Int]
-    var firstThree: [Int]
-    var firstFour: [Int]
-    var column: [Int]
-    var dozen: [Int]
-    var sixLine: [Int]
-    var street: [Int]
+    var insideOutcomes: [Inside: [Int]]
+    var outsideOutcomes: [Outside: [Int]]
+    
     init() {
         gamesWon = 0
         gamesLost = 0
@@ -323,21 +306,25 @@ class RouletteStats : Stats {
         numberOfOutsideGames = 0
         wonInside = 0
         wonOutside = 0
-        even = [0,0]
-        odd = [0,0]
-        black = [0,0]
-        red = [0,0]
-        low = [0,0]
-        high = [0,0]
-        straightUp = [0,0]
-        split = [0,0]
-        corner = [0,0]
-        firstThree = [0,0]
-        firstFour = [0,0]
-        column = [0,0]
-        dozen = [0,0]
-        sixLine = [0,0]
-        street = [0,0]
+        insideOutcomes = [
+            Inside.straightUp: [0,0],
+            Inside.column: [0,0],
+            Inside.dozen: [0,0],
+            Inside.corner: [0,0],
+            Inside.split: [0,0],
+            Inside.firstFour: [0,0],
+            Inside.firstThree: [0,0],
+            Inside.street: [0,0],
+            Inside.sixLine:[0,0]
+        ]
+        outsideOutcomes = [
+            Outside.red: [0,0],
+            Outside.black: [0,0],
+            Outside.low: [0,0],
+            Outside.high: [0,0],
+            Outside.even: [0,0],
+            Outside.odd: [0,0]
+        ]
     }
     
     enum CodingKeys: String, CodingKey {
@@ -349,20 +336,7 @@ class RouletteStats : Stats {
         case numberOfInsideGames = "NumberOfInsideGames"
         case wonOutside = "WonOutside"
         case wonInside = "WonInside"
-        case even = "Even"
-        case odd = "Odd"
-        case low = "Low"
-        case high = "High"
-        case red = "Red"
-        case black = "Black"
-        case straightUp = "StraightUp"
-        case split = "Split"
-        case corner = "Corner"
-        case firstThree = "FirstThree"
-        case firstFour = "FirstFour"
-        case column = "Column"
-        case dozen = "Dozen"
-        case sixLine = "SixLine"
-        case street = "Street"
+        case insideOutcomes = "InsideOutcomes"
+        case outsideOutcomes = "OutsideOutcomes"
     }
 }

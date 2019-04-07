@@ -51,26 +51,27 @@ extension DataAnalysis : UITableViewDataSource {
 }
 
 class RouletteDataAnalysis : NSObject {
-    var rouData = [RouletteAbsoluteAndPercent]()
+    var rouData: [[RouletteAbsoluteAndPercent]]
+    let headers = ["General", "Outside", "Inside"]
     init(rouStat: RouletteStats) {
         rouData = [
-            RouletteAbsoluteAndPercent(name: "Total inside games", won: rouStat.wonInside, lost:rouStat.numberOfInsideGames-rouStat.wonInside),
-            RouletteAbsoluteAndPercent(name: "Total outside games", won: rouStat.wonOutside, lost: rouStat.numberOfOutsideGames-rouStat.wonOutside),
-            RouletteAbsoluteAndPercent(name: "Outside: Even", won: rouStat.even[0], lost: rouStat.even[1]),
-            RouletteAbsoluteAndPercent(name: "Outside: Odd", won: rouStat.odd[0], lost: rouStat.odd[1]),
-            RouletteAbsoluteAndPercent(name: "Outside: Red", won: rouStat.red[0], lost: rouStat.red[1]),
-            RouletteAbsoluteAndPercent(name: "Outside: Black", won: rouStat.black[0], lost: rouStat.black[1]),
-            RouletteAbsoluteAndPercent(name: "Outside: Low", won: rouStat.low[0], lost: rouStat.low[1]),
-            RouletteAbsoluteAndPercent(name: "Outside: High", won: rouStat.high[0], lost: rouStat.high[1]),
-            RouletteAbsoluteAndPercent(name: "Straight up", won: rouStat.straightUp[0], lost: rouStat.straightUp[1]),
-            RouletteAbsoluteAndPercent(name: "Split", won: rouStat.split[0], lost: rouStat.split[1]),
-            RouletteAbsoluteAndPercent(name: "Corner", won: rouStat.corner[0], lost: rouStat.corner[1]),
-            RouletteAbsoluteAndPercent(name: "First Three", won: rouStat.firstThree[0], lost: rouStat.firstThree[1]),
-            RouletteAbsoluteAndPercent(name: "First Four", won: rouStat.firstFour[0], lost: rouStat.firstFour[1]),
-            RouletteAbsoluteAndPercent(name: "Column", won: rouStat.column[0], lost: rouStat.column[1]),
-            RouletteAbsoluteAndPercent(name: "Dozen", won: rouStat.dozen[0], lost: rouStat.dozen[1]),
-            RouletteAbsoluteAndPercent(name: "Street", won: rouStat.street[0], lost: rouStat.street[1]),
-            RouletteAbsoluteAndPercent(name: "Six Line", won: rouStat.sixLine[0], lost: rouStat.sixLine[1])
+            [RouletteAbsoluteAndPercent(name: "Total inside games", won: rouStat.wonInside, lost:rouStat.numberOfInsideGames-rouStat.wonInside),
+            RouletteAbsoluteAndPercent(name: "Total outside games", won: rouStat.wonOutside, lost: rouStat.numberOfOutsideGames-rouStat.wonOutside)],
+            [RouletteAbsoluteAndPercent(name: "Even", won: rouStat.outsideOutcomes[Outside.even]![0], lost: rouStat.outsideOutcomes[Outside.even]![1]),
+            RouletteAbsoluteAndPercent(name: "Odd", won: rouStat.outsideOutcomes[Outside.odd]![0], lost: rouStat.outsideOutcomes[Outside.odd]![1]),
+            RouletteAbsoluteAndPercent(name: "Red", won: rouStat.outsideOutcomes[Outside.red]![0], lost: rouStat.outsideOutcomes[Outside.red]![1]),
+            RouletteAbsoluteAndPercent(name: "Black", won: rouStat.outsideOutcomes[Outside.black]![0], lost: rouStat.outsideOutcomes[Outside.black]![1]),
+            RouletteAbsoluteAndPercent(name: "Low", won: rouStat.outsideOutcomes[Outside.low]![0], lost: rouStat.outsideOutcomes[Outside.low]![1]),
+            RouletteAbsoluteAndPercent(name: "High", won: rouStat.outsideOutcomes[Outside.high]![0], lost: rouStat.outsideOutcomes[Outside.high]![1])],
+            [RouletteAbsoluteAndPercent(name: "Straight up", won: rouStat.insideOutcomes[Inside.straightUp]![0], lost: rouStat.insideOutcomes[Inside.straightUp]![1]),
+            RouletteAbsoluteAndPercent(name: "Split", won: rouStat.insideOutcomes[Inside.split]![0], lost: rouStat.insideOutcomes[Inside.split]![1]),
+            RouletteAbsoluteAndPercent(name: "Corner", won: rouStat.insideOutcomes[Inside.corner]![0], lost: rouStat.insideOutcomes[Inside.corner]![1]),
+            RouletteAbsoluteAndPercent(name: "First Three", won: rouStat.insideOutcomes[Inside.firstThree]![0], lost: rouStat.insideOutcomes[Inside.firstThree]![1]),
+            RouletteAbsoluteAndPercent(name: "First Four", won: rouStat.insideOutcomes[Inside.firstFour]![0], lost: rouStat.insideOutcomes[Inside.firstFour]![1]),
+            RouletteAbsoluteAndPercent(name: "Column", won: rouStat.insideOutcomes[Inside.column]![0], lost: rouStat.insideOutcomes[Inside.column]![1]),
+            RouletteAbsoluteAndPercent(name: "Dozen", won: rouStat.insideOutcomes[Inside.dozen]![0], lost: rouStat.insideOutcomes[Inside.dozen]![1]),
+            RouletteAbsoluteAndPercent(name: "Street", won: rouStat.insideOutcomes[Inside.street]![0], lost: rouStat.insideOutcomes[Inside.street]![1]),
+            RouletteAbsoluteAndPercent(name: "Six Line", won: rouStat.insideOutcomes[Inside.sixLine]![0], lost: rouStat.insideOutcomes[Inside.sixLine]![1])]
         ]
         print(rouData)
     }
@@ -79,10 +80,13 @@ extension RouletteDataAnalysis : UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return rouData.count
     }
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return headers[section]
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: RouletteCell.self)) as! RouletteCell
-        let strings = rouData[indexPath.row]
+        let strings = rouData[indexPath.section][indexPath.row]
         cell.labelText = strings.name
         cell.wonText = strings.wonString
         cell.lostText = strings.lostString
