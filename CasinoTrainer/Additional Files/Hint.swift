@@ -9,45 +9,35 @@
 import Foundation
 
 class Hint {
+    let chances: BlackJackChances
     
-    static func giveNextCardHint(cards: [Card]) -> String {
-        
-        var points = countPoints(cards: cards)
-        var hint: String
-        
-        
-        
-        return ""
+    init() {
+        self.chances = BlackJackChances()
     }
     
-    static func chanceForUniqueNumber() -> Float {
-        return Float(4/52)
+    func giveNextCardHint(cards: [Card]) -> String {
+        let points = countPoints(cards: cards)
+        var hint: String = ""
+        let cardChances = chances.playerChances[points]!
+        for c in cardChances {
+            hint = "\(hint)\(c.key.description()) Points: \(MathHelper.roundFloat(number: c.value)) %\n"
+        }
+        return hint
     }
-    static func chanceForTen() -> Float {
-        return Float(16/52)
+    func giveBankChances(bankCard: Card) -> String {
+        let bankChances = chances.bankChances[bankCard.picture]!
+        var hint: String = ""
+        for c in bankChances {
+            hint = "\(hint)\(c.key.description()) Points: \(MathHelper.roundFloat(number: c.value)) %\n"
+        }
+        return hint
     }
-    static func countPoints(cards: [Card]) -> Int {
+    func countPoints(cards: [Card]) -> Int {
         var cardPoints = 0
         for c in cards {
             cardPoints += c.giveValue()
         }
         return cardPoints
-    }
-    static func chances() -> [Int:Float] {
-        let answer = [
-            1: chanceForUniqueNumber(),
-            2: chanceForUniqueNumber(),
-            3: chanceForUniqueNumber(),
-            4: chanceForUniqueNumber(),
-            5: chanceForUniqueNumber(),
-            6: chanceForUniqueNumber(),
-            7: chanceForUniqueNumber(),
-            8: chanceForUniqueNumber(),
-            9: chanceForUniqueNumber(),
-            10: chanceForTen(),
-            11: chanceForUniqueNumber()
-        ]
-        return answer
     }
     
 }
@@ -75,400 +65,305 @@ enum BlackJackPoints: Int {
     }
 }
 class BlackJackChances {
-    let playerChances: [BlackJackPoints:[Int:Float]]
-    let bankChances: [BlackJackPoints:[Rank:Float]]
-    let furtherChances: [BlackJackPoints:[Int:Float]]
+    let playerChances: [Int:[BlackJackPoints:Float]]
+    let bankChances: [Rank:[BlackJackPoints:Float]]
+    
     
     init() {
         self.playerChances = [
-            .underSeventeen : [
-                4: Float(1),
-                5: Float(1),
-                6: Float(12/13),
-                7: Float(8/13),
-                8: Float(7/13),
-                9: Float(6/13),
-                10: Float(5/13),
-                11: Float(5/13),
-                12: Float(4/13),
-                13: Float(3/13),
-                14: Float(2/13),
-                15: Float(1/13),
-                16: Float(0),
-                17: Float(0),
-                18: Float(0),
-                19: Float(0),
-                20: Float(0),
-                21: Float(0)
+            4 : [
+                .underSeventeen : Float(1),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0)
             ],
-            .seventeen : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(1/13),
-                7: Float(4/13),
-                8: Float(1/13),
-                9: Float(1/13),
-                10: Float(1/13),
-                11: Float(1/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(0),
-                18: Float(0),
-                19: Float(0),
-                20: Float(0),
-                21: Float(0)
+            5 : [
+                .underSeventeen : Float(1),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0)
             ],
-            .eightteen : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(1/13),
-                8: Float(4/13),
-                9: Float(1/13),
-                10: Float(1/13),
-                11: Float(1/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(1/13),
-                18: Float(0),
-                19: Float(0),
-                20: Float(0),
-                21: Float(0)
+            6 : [
+                .underSeventeen : Float(12/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0)
             ],
-            .nineteen : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(0),
-                8: Float(1/13),
-                9: Float(4/13),
-                10: Float(1/13),
-                11: Float(1/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(1/13),
-                18: Float(1/13),
-                19: Float(0),
-                20: Float(0),
-                21: Float(0)
+            7 : [
+                .underSeventeen : Float(8/13),
+                .seventeen : Float(4/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0)
             ],
-            .twenty : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(0),
-                8: Float(0),
-                9: Float(1/13),
-                10: Float(4/13),
-                11: Float(1/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(1/13),
-                18: Float(1/13),
-                19: Float(1/13),
-                20: Float(0),
-                21: Float(0)
+            8 : [
+                .underSeventeen : Float(7/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(4/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0)
             ],
-            .twentyone : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(0),
-                8: Float(0),
-                9: Float(0),
-                10: Float(1/13),
-                11: Float(4/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(1/13),
-                18: Float(1/13),
-                19: Float(1/13),
-                20: Float(1/13),
-                21: Float(0)
+            9 : [
+                .underSeventeen : Float(6/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(4/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(0),
+                .bust: Float(0)
             ],
-            .bust : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(0),
-                8: Float(0),
-                9: Float(0),
-                10: Float(0),
-                11: Float(0),
-                12: Float(4/13),
-                13: Float(5/13),
-                14: Float(6/13),
-                15: Float(7/13),
-                16: Float(8/13),
-                17: Float(9/13),
-                18: Float(10/13),
-                19: Float(11/13),
-                20: Float(12/13),
-                21: Float(1)
+            10 : [
+                .underSeventeen : Float(5/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(4/13),
+                .twentyone : Float(1/13),
+                .bust: Float(0)
+            ],
+            11 : [
+                .underSeventeen : Float(5/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(4/13),
+                .bust: Float(0)
+            ],
+            12 : [
+                .underSeventeen : Float(4/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(1/13),
+                .bust: Float(4/13)
+            ],
+            13 : [
+                .underSeventeen : Float(3/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(1/13),
+                .bust: Float(5/13)
+            ],
+            14 : [
+                .underSeventeen : Float(2/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(1/13),
+                .bust: Float(6/13)
+            ],
+            15 : [
+                .underSeventeen : Float(1/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(1/13),
+                .bust: Float(7/13)
+            ],
+            16 : [
+                .underSeventeen : Float(0),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(1/13),
+                .bust: Float(8/13)
+            ],
+            17 : [
+                .underSeventeen : Float(0),
+                .seventeen : Float(0),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(1/13),
+                .bust: Float(9/13)
+            ],
+            18 : [
+                .underSeventeen : Float(0),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(1/13),
+                .bust: Float(10/13)
+            ],
+            19 : [
+                .underSeventeen : Float(0),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(1/13),
+                .twentyone : Float(1/13),
+                .bust: Float(11/13)
+            ],
+            20 : [
+                .underSeventeen : Float(0),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(1/13),
+                .bust: Float(12/13)
+            ],
+            21 : [
+                .underSeventeen : Float(0),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(1)
             ]
         ]
         self.bankChances = [
-            .underSeventeen : [
-                .ace: Float(5/13),
-                .two: Float(1),
-                .three: Float(1),
-                .four: Float(1),
-                .five: Float(1),
-                .six: Float(12/13),
-                .seven: Float(8/13),
-                .eight: Float(7/13),
-                .nine: Float(6/13),
-                .ten: Float(5/13),
-                .jack: Float(5/13),
-                .queen: Float(5/13),
-                .king: Float(5/13)
+            .ace : [
+                .underSeventeen : Float(5/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(4/13),
+                .bust: Float(0),
+                .blackjack: Float(4/13)
             ],
-            .seventeen : [
-                .ace: Float(1/13),
-                .two: Float(0),
-                .three: Float(0),
-                .four: Float(0),
-                .five: Float(0),
-                .six: Float(1/13),
-                .seven: Float(4/13),
-                .eight: Float(1/13),
-                .nine: Float(1/13),
-                .ten: Float(1/13),
-                .jack: Float(1/13),
-                .queen: Float(1/13),
-                .king: Float(1/13)
+            .two : [
+                .underSeventeen : Float(1),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0),
+                .blackjack: Float(0)
             ],
-            .eightteen : [
-                .ace: Float(1/13),
-                .two: Float(0),
-                .three: Float(0),
-                .four: Float(0),
-                .five: Float(0),
-                .six: Float(0),
-                .seven: Float(1/13),
-                .eight: Float(4/13),
-                .nine: Float(1/13),
-                .ten: Float(1/13),
-                .jack: Float(1/13),
-                .queen: Float(1/13),
-                .king: Float(1/13)
+            .three : [
+                .underSeventeen : Float(1),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0),
+                .blackjack: Float(0)
             ],
-            .nineteen : [
-                .ace: Float(1/13),
-                .two: Float(0),
-                .three: Float(0),
-                .four: Float(0),
-                .five: Float(0),
-                .six: Float(0),
-                .seven: Float(0),
-                .eight: Float(1/13),
-                .nine: Float(4/13),
-                .ten: Float(1/13),
-                .jack: Float(1/13),
-                .queen: Float(1/13),
-                .king: Float(1/13)
+            .four : [
+                .underSeventeen : Float(1),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0),
+                .blackjack: Float(0)
             ],
-            .twenty : [
-                .ace: Float(1/13),
-                .two: Float(0),
-                .three: Float(0),
-                .four: Float(0),
-                .five: Float(0),
-                .six: Float(0),
-                .seven: Float(0),
-                .eight: Float(0),
-                .nine: Float(1/13),
-                .ten: Float(4/13),
-                .jack: Float(4/13),
-                .queen: Float(4/13),
-                .king: Float(4/13)
+            .five : [
+                .underSeventeen : Float(1),
+                .seventeen : Float(0),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0),
+                .blackjack: Float(0)
             ],
-            .twentyone : [
-                .ace: Float(4/13),
-                .two: Float(0),
-                .three: Float(0),
-                .four: Float(0),
-                .five: Float(0),
-                .six: Float(0),
-                .seven: Float(0),
-                .eight: Float(0),
-                .nine: Float(0),
-                .ten: Float(1/13),
-                .jack: Float(1/13),
-                .queen: Float(1/13),
-                .king: Float(1/13)
+            .six : [
+                .underSeventeen : Float(12/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(0),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0),
+                .blackjack: Float(0)
             ],
-            .blackjack: [
-                .ace: Float(4/13),
-                .two: Float(0),
-                .three: Float(0),
-                .four: Float(0),
-                .five: Float(0),
-                .six: Float(0),
-                .seven: Float(0),
-                .eight: Float(0),
-                .nine: Float(0),
-                .ten: Float(1/13),
-                .jack: Float(1/13),
-                .queen: Float(1/13),
-                .king: Float(1/13)
-            ]
-        ]
-        self.furtherChances = [
-            .underSeventeen : [
-                4: Float(1),
-                5: Float(1),
-                6: Float(12/13),
-                7: Float(8/13),
-                8: Float(7/13),
-                9: Float(6/13),
-                10: Float(5/13),
-                11: Float(5/13),
-                12: Float(4/13),
-                13: Float(3/13),
-                14: Float(2/13),
-                15: Float(1/13),
-                16: Float(0),
-                17: Float(0),
-                18: Float(0),
-                19: Float(0),
-                20: Float(0),
-                21: Float(0)
+            .seven : [
+                .underSeventeen : Float(8/13),
+                .seventeen : Float(4/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(0),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0),
+                .blackjack: Float(0)
             ],
-            .seventeen : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(1/13),
-                7: Float(4/13),
-                8: Float(1/13),
-                9: Float(1/13),
-                10: Float(1/13),
-                11: Float(1/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(0),
-                18: Float(0),
-                19: Float(0),
-                20: Float(0),
-                21: Float(0)
+            .eight : [
+                .underSeventeen : Float(7/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(4/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(0),
+                .twentyone : Float(0),
+                .bust: Float(0),
+                .blackjack: Float(0)
             ],
-            .eightteen: [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(1/13),
-                8: Float(4/13),
-                9: Float(1/13),
-                10: Float(1/13),
-                11: Float(1/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(1/13),
-                18: Float(0),
-                19: Float(0),
-                20: Float(0),
-                21: Float(0)
+            .nine : [
+                .underSeventeen : Float(6/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(4/13),
+                .twenty : Float(1/13),
+                .twentyone : Float(0),
+                .bust: Float(0),
+                .blackjack: Float(0)
             ],
-            .nineteen : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(0),
-                8: Float(1/13),
-                9: Float(4/13),
-                10: Float(1/13),
-                11: Float(1/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(1/13),
-                18: Float(1/13),
-                19: Float(0),
-                20: Float(0),
-                21: Float(0)
+            .ten : [
+                .underSeventeen : Float(5/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(4/13),
+                .twentyone : Float(1/13),
+                .bust: Float(0),
+                .blackjack: Float(1/13)
             ],
-            .twenty : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(0),
-                8: Float(0),
-                9: Float(1/13),
-                10: Float(4/13),
-                11: Float(1/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(1/13),
-                18: Float(1/13),
-                19: Float(1/13),
-                20: Float(0),
-                21: Float(0)
+            .jack : [
+                .underSeventeen : Float(5/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(4/13),
+                .twentyone : Float(1/13),
+                .bust: Float(0),
+                .blackjack: Float(1/13)
             ],
-            .twentyone : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(0),
-                8: Float(0),
-                9: Float(0),
-                10: Float(1/13),
-                11: Float(4/13),
-                12: Float(1/13),
-                13: Float(1/13),
-                14: Float(1/13),
-                15: Float(1/13),
-                16: Float(1/13),
-                17: Float(1/13),
-                18: Float(1/13),
-                19: Float(1/13),
-                20: Float(1/13),
-                21: Float(0)
+            .queen : [
+                .underSeventeen : Float(5/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(4/13),
+                .twentyone : Float(1/13),
+                .bust: Float(0),
+                .blackjack: Float(1/13)
             ],
-            .bust : [
-                4: Float(0),
-                5: Float(0),
-                6: Float(0),
-                7: Float(0),
-                8: Float(0),
-                9: Float(0),
-                10: Float(0),
-                11: Float(0),
-                12: Float(4/13),
-                13: Float(5/13),
-                14: Float(6/13),
-                15: Float(7/13),
-                16: Float(8/13),
-                17: Float(9/13),
-                18: Float(10/13),
-                19: Float(11/13),
-                20: Float(12/13),
-                21: Float(1)
+            .king : [
+                .underSeventeen : Float(5/13),
+                .seventeen : Float(1/13),
+                .eightteen : Float(1/13),
+                .nineteen : Float(1/13),
+                .twenty : Float(4/13),
+                .twentyone : Float(1/13),
+                .bust: Float(0),
+                .blackjack: Float(1/13)
             ]
         ]
     }
