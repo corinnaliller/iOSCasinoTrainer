@@ -367,24 +367,13 @@ class RouletteBetViewController: UIViewController {
                 }
                 bet = InsideBet(type: type, number: selectedNumber, def: splitNumber)
             }
-            performSegue(withIdentifier: "returnToTable", sender: self)
-            //self.navigationController?.popViewController(animated: false)
-            self.navigationController?.viewControllers.remove(at: 1)
-            
+            let index = self.navigationController?.viewControllers.count
+            let rouVC: RouletteController = self.navigationController?.viewControllers[index!-2] as! RouletteController
+            rouVC.bet = bet
+            rouVC.guest = guest
+            self.navigationController?.popViewController(animated: true)
         }
         
-    }
-    
-    
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.destination is RouletteController {
-            let table = segue.destination as! RouletteController
-            table.bet = self.bet
-            table.guest = self.guest
-        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -393,7 +382,7 @@ class RouletteBetViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        DataSaver.saveGuest(guest: guest!)
+        try? DataSaver.saveGuest(guest: guest!)
     }
 
 }

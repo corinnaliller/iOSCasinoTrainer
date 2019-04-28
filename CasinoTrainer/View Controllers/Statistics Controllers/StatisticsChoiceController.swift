@@ -17,7 +17,7 @@ class StatisticsChoiceController: UIViewController {
         // Do any additional setup after loading the view.
     }
     @IBAction func goToTable(_ sender: UIButton) {
-        let bjgames = guest!.bjStats.gamesTied+guest!.bjStats.gamesLost+guest!.bjStats.gamesWon
+        let bjgames = guest!.bjStats.outcomes[BlackJackOutcomes.gamesTied]!+guest!.bjStats.gamesLost+guest!.bjStats.gamesWon
         let rougames = guest!.rouStats.gamesWon+guest!.rouStats.gamesLost
         switch sender.tag {
         case 1:
@@ -55,11 +55,17 @@ class StatisticsChoiceController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        do {
+            guest = try DataSaver.retrieveGuest()
+        }
+        catch {
+            print(error.localizedDescription)
+        }
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        DataSaver.saveGuest(guest: guest!)
+        try? DataSaver.saveGuest(guest: guest!)
     }
 
 }

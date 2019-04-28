@@ -74,49 +74,24 @@ class RouletteBet {
         self.payout = payout
     }
 }
-enum Outside {
-    case even, odd, red, black, low, high
-    func description() -> String {
-        switch self {
-        case .even:
-            return "EVEN"
-        case .odd:
-            return "ODD"
-        case .black:
-            return "BLACK"
-        case .red:
-            return "RED"
-        case .low:
-            return "LOW"
-        case .high:
-            return "HIGH"
-        }
-    }
+enum Outside : String, Codable {
+    case even = "EVEN"
+    case odd = "ODD"
+    case red = "RED"
+    case black = "BLACK"
+    case low = "LOW"
+    case high = "HIGH"
 }
-enum Inside {
-    case straightUp, split, street, firstThree, firstFour, corner, sixLine, dozen, column
-    func description() -> String {
-        switch self {
-        case .straightUp:
-            return "Straight Up"
-        case .split:
-            return "Split"
-        case .column:
-            return "Column"
-        case .dozen:
-            return "Dozen"
-        case .corner:
-            return "Corner"
-        case .firstFour:
-            return "First Four"
-        case .firstThree:
-            return "First Three"
-        case .sixLine:
-            return "Six Line"
-        case .street:
-            return "Street"
-        }
-    }
+enum Inside : String, Codable {
+    case straightUp = "StraightUp"
+    case split = "Split"
+    case street = "Street"
+    case firstThree = "FirstThree"
+    case firstFour = "FirstFour"
+    case corner = "Corner"
+    case sixLine = "SixLine"
+    case dozen = "Dozen"
+    case column = "Column"
 }
 class OutsideBet : RouletteBet {
     let type: Outside
@@ -138,7 +113,7 @@ class OutsideBet : RouletteBet {
         }
     }
     func description() -> String {
-        return type.description()
+        return type.rawValue
     }
 }
 class InsideBet: RouletteBet {
@@ -201,21 +176,21 @@ class InsideBet: RouletteBet {
     func description() -> String {
         switch type {
         case .straightUp:
-            return "\(type.description()) \(numbers[0])"
+            return "\(type.rawValue) \(numbers[0])"
         case .firstThree, .firstFour:
-            return type.description()
+            return type.rawValue
         case .dozen:
-            return "\(type.description()) \(numbers[0]) to \(numbers[11])"
+            return "\(type.rawValue) \(numbers[0]) to \(numbers[11])"
         case .column:
-            return "\(type.description()) \(numbers[0])"
+            return "\(type.rawValue) \(numbers[0])"
         case .sixLine:
-            return "\(type.description()) \(numbers[0]) to \(numbers[5])"
+            return "\(type.rawValue) \(numbers[0]) to \(numbers[5])"
         case .street:
-            return "\(type.description()) \(numbers[0]) to \(numbers[2])"
+            return "\(type.rawValue) \(numbers[0]) to \(numbers[2])"
         case .corner:
-            return "\(type.description()) \(numbers[0]) to \(numbers[3])"
+            return "\(type.rawValue) \(numbers[0]) to \(numbers[3])"
         case .split:
-            return "\(type.description()) \(numbers[0]) / \(numbers[1])"
+            return "\(type.rawValue) \(numbers[0]) / \(numbers[1])"
         }
     }
 }

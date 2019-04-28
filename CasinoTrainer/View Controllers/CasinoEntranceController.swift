@@ -18,8 +18,13 @@ class CasinoEntranceController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guest = DataSaver.retrieveGuest()
-        if guest?.playerName != "Placeholder" {
+        do {
+            guest = try DataSaver.retrieveGuest()
+        }
+        catch {
+            print(error.localizedDescription)
+        }
+        if guest != nil {
             bEnterAs.setTitle("Enter as \(guest!.playerName)", for: .normal)
             bEnterAs.isHidden = false
         }

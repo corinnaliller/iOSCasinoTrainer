@@ -244,7 +244,7 @@ class BlackJackLogic {
                 }
             }
         }
-        return BlackJackGameOver(outcome: outcome, prize: prize, stakes: stakes, insurance: insuranceMoney, bust: bustBetMoney, dd: doubleDown, bj: bJ, ts: ts, bbj: bankBJ, bwb: bankBust, ti: tookInsurance, bob: betOnBust)
+        return BlackJackGameOver(outcome: outcome, prize: prize, stakes: stakes, insurance: insuranceMoney, bust: bustBetMoney, dd: doubleDown, bj: bJ, ts: ts, bbj: bankBJ, bwb: bankBust, ti: tookInsurance, bob: betOnBust, wb: bust)
     }
 }
 
@@ -261,8 +261,9 @@ struct BlackJackGameOver {
     var bankWentBust: Bool
     var tookInsurance: Bool
     var betOnBust: Bool
+    var wentBust: Bool
     
-    init(outcome: Int, prize: Float, stakes: Float, insurance: Float, bust: Float, dd: Bool, bj: Bool, ts: Bool, bbj: Bool, bwb: Bool, ti: Bool, bob: Bool) {
+    init(outcome: Int, prize: Float, stakes: Float, insurance: Float, bust: Float, dd: Bool, bj: Bool, ts: Bool, bbj: Bool, bwb: Bool, ti: Bool, bob: Bool, wb: Bool) {
         winOrLose = Status.init(rawValue: outcome)!
         prizeMoney = prize
         stakesMoney = stakes
@@ -275,6 +276,7 @@ struct BlackJackGameOver {
         bankWentBust = bwb
         tookInsurance = ti
         betOnBust = bob
+        wentBust = wb
     }
     func description() -> String {
         let answer = """
@@ -288,6 +290,7 @@ struct BlackJackGameOver {
         Bank had Black Jack: \(bankHadBlackJack)
         Had Triple Seven: \(hadTripleSeven)
         Bank went Bust: \(bankWentBust)
+        Player went Bust: \(wentBust)
         """
         return answer
     }
