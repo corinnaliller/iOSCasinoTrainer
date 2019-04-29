@@ -47,7 +47,7 @@ class DataAnalysis : NSObject {
 }
 extension DataAnalysis : UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return bjData.count
+        return bjData[section].count
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return headers[section]
@@ -57,6 +57,7 @@ extension DataAnalysis : UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: StatisticsCell.self)) as! StatisticsCell
+        print("section: \(indexPath.section), row: \(indexPath.row)")
         let strings = bjData[indexPath.section][indexPath.row]
         cell.labelText = strings.name
         cell.absoluteText = strings.absoluteString
