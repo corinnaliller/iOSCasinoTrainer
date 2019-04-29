@@ -16,6 +16,8 @@
 		349BE82421E6285C004C22BF /* RouletteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349BE82321E6285C004C22BF /* RouletteCell.swift */; };
 		349BE82621E62906004C22BF /* MetaStatisticsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349BE82521E62906004C22BF /* MetaStatisticsCell.swift */; };
 		349BE82821E62973004C22BF /* StatisticsDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349BE82721E62973004C22BF /* StatisticsDataSources.swift */; };
+		34E02B782277091A0025274F /* DatabaseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E02B772277091A0025274F /* DatabaseHelpers.swift */; };
+		34E02B7A22770B590025274F /* DatabaseTables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E02B7922770B590025274F /* DatabaseTables.swift */; };
 		470CD4D721A16C8500981833 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470CD4D621A16C8500981833 /* AppDelegate.swift */; };
 		470CD4D921A16C8500981833 /* CasinoFoyerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470CD4D821A16C8500981833 /* CasinoFoyerController.swift */; };
 		470CD4DC21A16C8500981833 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 470CD4DA21A16C8500981833 /* Main.storyboard */; };
@@ -66,6 +68,8 @@
 		349BE82321E6285C004C22BF /* RouletteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouletteCell.swift; sourceTree = "<group>"; };
 		349BE82521E62906004C22BF /* MetaStatisticsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaStatisticsCell.swift; sourceTree = "<group>"; };
 		349BE82721E62973004C22BF /* StatisticsDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsDataSources.swift; sourceTree = "<group>"; };
+		34E02B772277091A0025274F /* DatabaseHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseHelpers.swift; sourceTree = "<group>"; };
+		34E02B7922770B590025274F /* DatabaseTables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTables.swift; sourceTree = "<group>"; };
 		470CD4D321A16C8500981833 /* CasinoTrainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CasinoTrainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		470CD4D621A16C8500981833 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		470CD4D821A16C8500981833 /* CasinoFoyerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasinoFoyerController.swift; sourceTree = "<group>"; };
@@ -139,6 +143,15 @@
 				349BE82321E6285C004C22BF /* RouletteCell.swift */,
 			);
 			path = "Table Cells";
+			sourceTree = "<group>";
+		};
+		34E02B7B22770B650025274F /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				34E02B772277091A0025274F /* DatabaseHelpers.swift */,
+				34E02B7922770B590025274F /* DatabaseTables.swift */,
+			);
+			path = Database;
 			sourceTree = "<group>";
 		};
 		470CD4CA21A16C8500981833 = {
@@ -230,6 +243,7 @@
 				3495BC0322142D91004B007A /* DataSaver.swift */,
 				349BE82721E62973004C22BF /* StatisticsDataSources.swift */,
 				47AC81B421A18A7400A0E1C1 /* RouletteComponents.swift */,
+				34E02B7B22770B650025274F /* Database */,
 			);
 			path = "Additional Files";
 			sourceTree = "<group>";
@@ -375,6 +389,7 @@
 				349BE82621E62906004C22BF /* MetaStatisticsCell.swift in Sources */,
 				471AB40A21A30979003AA1B3 /* StatisticsCell.swift in Sources */,
 				470CD4D921A16C8500981833 /* CasinoFoyerController.swift in Sources */,
+				34E02B782277091A0025274F /* DatabaseHelpers.swift in Sources */,
 				47AC81B521A18A7400A0E1C1 /* RouletteComponents.swift in Sources */,
 				470CD50921A16E3100981833 /* RouletteController.swift in Sources */,
 				347F65FD21C12422002A56D0 /* RouletteBetViewController.swift in Sources */,
@@ -382,6 +397,7 @@
 				470CD50D21A1709400981833 /* BlackJackStatisticsController.swift in Sources */,
 				349BE82021E61A54004C22BF /* MetaStatisticsController.swift in Sources */,
 				47AC81AD21A1898600A0E1C1 /* Models.swift in Sources */,
+				34E02B7A22770B590025274F /* DatabaseTables.swift in Sources */,
 				470CD50521A16D3200981833 /* CasinoEntranceController.swift in Sources */,
 				349BE82821E62973004C22BF /* StatisticsDataSources.swift in Sources */,
 				4717E77721A5788B0064908D /* ModelControllers.swift in Sources */,
