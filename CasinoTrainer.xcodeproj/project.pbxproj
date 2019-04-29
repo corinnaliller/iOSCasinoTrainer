@@ -35,6 +35,7 @@
 		4717734D22588A3E00C2594C /* Statistics.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4717734C22588A3E00C2594C /* Statistics.storyboard */; };
 		4717E77721A5788B0064908D /* ModelControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4717E77621A5788B0064908D /* ModelControllers.swift */; };
 		471AB40A21A30979003AA1B3 /* StatisticsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471AB40921A30979003AA1B3 /* StatisticsCell.swift */; };
+		4750E7D82277609500554F23 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4750E7D72277609500554F23 /* Database.swift */; };
 		47AC81AD21A1898600A0E1C1 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AC81AC21A1898600A0E1C1 /* Models.swift */; };
 		47AC81AF21A189D600A0E1C1 /* Card Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AC81AE21A189D600A0E1C1 /* Card Components.swift */; };
 		47AC81B321A18A3E00A0E1C1 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AC81B221A18A3E00A0E1C1 /* Statistics.swift */; };
@@ -93,6 +94,7 @@
 		4717734C22588A3E00C2594C /* Statistics.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Statistics.storyboard; sourceTree = "<group>"; };
 		4717E77621A5788B0064908D /* ModelControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelControllers.swift; sourceTree = "<group>"; };
 		471AB40921A30979003AA1B3 /* StatisticsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsCell.swift; sourceTree = "<group>"; };
+		4750E7D72277609500554F23 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		47AC81AC21A1898600A0E1C1 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		47AC81AE21A189D600A0E1C1 /* Card Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Card Components.swift"; sourceTree = "<group>"; };
 		47AC81B221A18A3E00A0E1C1 /* Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			children = (
 				34E02B772277091A0025274F /* DatabaseHelpers.swift */,
 				34E02B7922770B590025274F /* DatabaseTables.swift */,
+				4750E7D72277609500554F23 /* Database.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -385,6 +388,7 @@
 				349BE81E21E61A42004C22BF /* RouletteStatisticsController.swift in Sources */,
 				349BE81C21E616D6004C22BF /* StatisticsChoiceController.swift in Sources */,
 				470CD50B21A1707F00981833 /* BlackJackController.swift in Sources */,
+				4750E7D82277609500554F23 /* Database.swift in Sources */,
 				470CD50721A16DAB00981833 /* CasinoNavigator.swift in Sources */,
 				349BE82621E62906004C22BF /* MetaStatisticsCell.swift in Sources */,
 				471AB40A21A30979003AA1B3 /* StatisticsCell.swift in Sources */,

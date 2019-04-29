@@ -7,7 +7,28 @@
 //
 
 import Foundation
-struct Players {
+
+enum TableNames : String {
+    case Players, BlackJackGames, RouletteGames
+}
+
+protocol SQLTable {
+    static var createStatement: String { get }
+}
+
+struct PlayerTable {
     let id: Int32
     let name: NSString
+}
+extension PlayerTable : SQLTable {
+    static var createStatement: String {
+        return """
+        CREATE TABLE \(TableNames.Players.rawValue) (
+        Id INT PRIMARY KEY AUTOINCREMENT,
+        Name VARCHAR(255)
+        );
+        """
+    }
+    
+    
 }
