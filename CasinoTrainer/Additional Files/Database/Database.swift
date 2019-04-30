@@ -68,7 +68,7 @@ extension SQLiteDatabase {
         print("\(table) table created")
     }
     func insertPlayer(_ player: String) throws {
-        let insertPlayerSQL = "INSERT INTO \(TableNames.Players.rawValue) (Name) VALUES (?);"
+        let insertPlayerSQL = "INSERT INTO \(TableNames.Guest.rawValue) (Name) VALUES (?);"
         let insertStatement = try prepareStatement(sql: insertPlayerSQL)
         defer {
             sqlite3_finalize(insertStatement)
@@ -83,3 +83,24 @@ extension SQLiteDatabase {
         print("Successfully inserted row")
     }
 }
+//extension SQLiteDatabase {
+//    func blackJackGame(id: Int32) -> BlackJackGame? {
+//        let querySql = "SELECT * FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ?;"
+//        guard let queryStatement = try? prepareStatement(sql: querySql) else {
+//            return nil
+//        }
+//        defer {
+//            sqlite3_finalize(queryStatement)
+//        }
+//        guard sqlite3_bind_int(queryStatement, 1, id) == SQLITE_OK else {
+//            return nil
+//        }
+//        guard sqlite3_step(queryStatement) == SQLITE_ROW else {
+//            return nil
+//        }
+//        let id = sqlite3_column_int(queryStatement, 0)
+//        let queryResultCol1 = sqlite3_column_text(queryStatement, 1)
+//        let name = String(cString: queryResultCol1!) as NSString
+//        return Contact(id: id, name: name)
+//    }
+//}
