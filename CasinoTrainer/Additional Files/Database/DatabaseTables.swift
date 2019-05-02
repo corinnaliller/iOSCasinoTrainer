@@ -9,7 +9,7 @@
 import Foundation
 
 enum TableNames : String {
-    case Guest, BlackJackGames, RouletteGames
+    case Guest, BlackJackGames, RouletteGames, BlackJackBustBet, BlackJackInsurance
 }
 
 protocol SQLTable {
@@ -19,10 +19,14 @@ protocol SQLTable {
 struct CasinoGuest {
     let id: Int32
     let name: NSString
+    let capital: Double
+    let balance: Double
     
-    init(id: Int32, name: NSString) {
+    init(id: Int32, name: NSString, capital: Double, balance: Double) {
         self.id = id
         self.name = name
+        self.capital = capital
+        self.balance = balance
     }
 }
 extension CasinoGuest : SQLTable {
@@ -30,7 +34,9 @@ extension CasinoGuest : SQLTable {
         return """
         CREATE TABLE \(TableNames.Guest.rawValue) (
         Id INT PRIMARY KEY AUTOINCREMENT,
-        Name VARCHAR(255) NOT NULL UNIQUE
+        Name VARCHAR(255) NOT NULL UNIQUE,
+        Capital DOUBLE NOT NULL,
+        Balance DOUBLE NOT NULL
         );
         """
     }
@@ -40,36 +46,34 @@ extension CasinoGuest : SQLTable {
 struct BlackJackGame {
     let id: Int32
     let gameNo: Int32
-    let won: Bool
+    let status: Int32
+    let hadBlackJack: Bool
     let bust: Bool
     let bankWentBust: Bool
-    let stakes: Float32
-    let prize: Float32
+    let bankHadBlackJack: Bool
+    let stakes: Double
+    let prize: Double
     let points: Int32
     let bankPoints: Int32
     let betOnBust: Bool
-    let bustBetStake: Float32?
-    let bustBetPayout: Float32?
     let tookInsurance: Bool
-    let insuranceStake: Float32?
-    let insurancePayout: Float32?
+    let doubledDown: Bool
     
-    init(id: Int32, gameNo: Int32, won: Bool, bust: Bool, bankWentBust: Bool, stakes: Float32, prize: Float32, points: Int32, bankPoints: Int32, betOnBust: Bool, bustBetStake: Float32?, bustBetPayout: Float32?, tookInsurance: Bool, insuranceStake: Float32?, insurancePayout: Float32?) {
+    init(id: Int32, gameNo: Int32, status: Int32, hadBlackJack: Bool, bust: Bool, bankWentBust: Bool, bankHadBlackJack: Bool, stakes: Double, prize: Double, points: Int32, bankPoints: Int32, betOnBust: Bool, tookInsurance: Bool, doubledDown: Bool) {
         self.id = id
         self.gameNo = gameNo
-        self.won = won
+        self.status = status
+        self.hadBlackJack = hadBlackJack
         self.bust = bust
         self.bankWentBust = bankWentBust
+        self.bankHadBlackJack = bankHadBlackJack
         self.stakes = stakes
         self.prize = prize
         self.points = points
         self.bankPoints = bankPoints
         self.betOnBust = betOnBust
-        self.bustBetStake = bustBetStake
-        self.bustBetPayout = bustBetPayout
         self.tookInsurance = tookInsurance
-        self.insuranceStake = insuranceStake
-        self.insurancePayout = insurancePayout
+        self.doubledDown = doubledDown
     }
 }
 extension BlackJackGame : SQLTable {
@@ -78,20 +82,74 @@ extension BlackJackGame : SQLTable {
         CREATE TABLE \(TableNames.BlackJackGames.rawValue) (
         Id INT NOT NULL,
         GameNo INT PRIMARY KEY AUTOINCREMENT,
-        Won INT NOT NULL,
-        Bust INT NOT NULL,
-        Bank_went_bust INT NOT NULL,
-        Stakes FLOAT NOT NULL,
-        Prize FLOAT NOT NULL,
+        Status VARCHAR(1) NOT NULL,
+        Had_Blackjack VARCHAR(1) NOT NULL,
+        Bust VARCHAR(1) NOT NULL,
+        Bank_went_bust VARCHAR(1) NOT NULL,
+        Bank_had_Blackjack VARCHAR(1) NOT NULL,
+        Stakes DOUBLE NOT NULL,
+        Prize DOUBLE NOT NULL,
         Points INT NOT NULL,
         Bank_Points INT NOT NULL,
-        Bet_on_Bust INT NOT NULL,
-        BustBet_Stake FLOAT,
-        BustBet_Payout FLOAT,
-        Took_Insurance Int NOT NULL,
-        Insurance_Stake FLOAT,
-        Insurance_Payout FLOAT,
+        Bet_on_Bust VARCHAR(1) NOT NULL,
+        Took_Insurance VARCHAR(1) NOT NULL,
+        Doubled_down VARCHAR(1) NOT NULL,
         FOREIGN KEY (Id) REFERENCES \(TableNames.Guest.rawValue) (Id)
+        );
+        """
+    }
+}
+class BlackJackBustBet {
+    let id: Int32
+    let gameNo: Int32
+    let stake: Double
+    let payout: Double?
+    
+    init(id: Int32, no: Int32, stake: Double, payout: Double?) {
+        self.id = id
+        self.gameNo = no
+        self.stake = stake
+        self.payout = payout
+    }
+}
+extension BlackJackBustBet : SQLTable {
+    static var createStatement: String {
+        return """
+        CREATE TABLE \(TableNames.BlackJackBustBet.rawValue) (
+        Id INT NOT NULL,
+        GameNo INT NOT NULL,
+        Stake DOUBLE NOT NULL,
+        Payout DOUBLE,
+        PRIMARY KEY (Id, GameNo),
+        FOREIGN KEY (Id) REFERENCES \(TableNames.Guest.rawValue) (Id)
+        FOREIGN KEY (GameNo) REFERENCES \(TableNames.BlackJackGames.rawValue) (GameNo)
+        );
+        """
+    }
+}
+class BlackJackInsurance {
+    let id: Int32
+    let gameNo: Int32
+    let stake: Double
+    let payout: Double?
+    init(id: Int32, no: Int32, stake: Double, payout: Double?) {
+        self.id = id
+        self.gameNo = no
+        self.stake = stake
+        self.payout = payout
+    }
+}
+extension BlackJackInsurance : SQLTable {
+    static var createStatement: String {
+        return """
+        CREATE TABLE \(TableNames.BlackJackInsurance.rawValue) (
+        Id INT NOT NULL,
+        GameNo INT NOT NULL,
+        Stake DOUBLE NOT NULL,
+        Payout DOUBLE,
+        PRIMARY KEY (Id, GameNo),
+        FOREIGN KEY (Id) REFERENCES \(TableNames.Guest.rawValue) (Id)
+        FOREIGN KEY (GameNo) REFERENCES \(TableNames.BlackJackGames.rawValue) (GameNo)
         );
         """
     }

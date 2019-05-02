@@ -67,20 +67,47 @@ extension SQLiteDatabase {
         }
         print("\(table) table created")
     }
-    func insertPlayer(_ player: String) throws {
-        let insertPlayerSQL = "INSERT INTO \(TableNames.Guest.rawValue) (Name) VALUES (?);"
+    func insertPlayer(_ player: String, capital: Float) throws {
+        let insertPlayerSQL = "INSERT INTO \(TableNames.Guest.rawValue) VALUES (null, ?, ?, ?);"
         let insertStatement = try prepareStatement(sql: insertPlayerSQL)
         defer {
             sqlite3_finalize(insertStatement)
         }
         let playerName: NSString = player as NSString
-        guard sqlite3_bind_text(insertStatement, 2, playerName.utf8String, -1, nil) == SQLITE_OK else {
+        guard sqlite3_bind_text(insertStatement, 2, playerName.utf8String, -1, nil) == SQLITE_OK && sqlite3_bind_double(insertStatement, 3, Double(capital)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 4, Double(capital)) == SQLITE_OK else {
             throw SQLiteError.Bind(message: errorMessage)
         }
         guard sqlite3_step(insertStatement) == SQLITE_DONE else {
             throw SQLiteError.Step(message: errorMessage)
         }
         print("Successfully inserted row")
+    }
+    func insertBlackJackGameRow(_ game: BlackJackGameOver, player: Player) throws {
+        let insertBlackJackSQL = "INSERT INTO \(TableNames.BlackJackGames.rawValue) (Id, Status, Had_Blackjack, Bust, Bank_went_bust, Bank_had_Blackjack, Stakes, Prize, Points, Bank_Points, Bet_on_Bust, Took_Insurance, Doubled_down) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        let insertStatement = try prepareStatement(sql: insertBlackJackSQL)
+        guard sqlite3_bind_int(insertStatement, 1, Int32(player.id)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 2, Int32(game.winOrLose.rawValue)) == SQLITE_OK && sqlite3_bind_text(insertStatement, 3, boolToChar(test: game.hadBlackJack), -1, nil) == SQLITE_OK && sqlite3_bind_text(insertStatement, 4, boolToChar(test: game.wentBust), -1, nil) == SQLITE_OK && sqlite3_bind_text(insertStatement, 5, boolToChar(test: game.bankWentBust), -1, nil) == SQLITE_OK && sqlite3_bind_text(insertStatement, 6, boolToChar(test: game.bankHadBlackJack), -1, nil) == SQLITE_OK && sqlite3_bind_double(insertStatement, 7, Double(game.stakesMoney)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 8, Double(game.prizeMoney)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 9, Int32(game.points)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 10, Int32(game.bankPoints)) == SQLITE_OK &&  sqlite3_bind_text(insertStatement, 11, boolToChar(test: game.betOnBust), -1, nil) == SQLITE_OK && sqlite3_bind_text(insertStatement, 12, boolToChar(test: game.tookInsurance), -1, nil) == SQLITE_OK && sqlite3_bind_text(insertStatement, 13, boolToChar(test: game.doubledDown), -1, nil) == SQLITE_OK else {
+            throw SQLiteError.Bind(message: errorMessage)
+        }
+        guard sqlite3_step(insertStatement) == SQLITE_DONE else {
+            throw SQLiteError.Step(message: errorMessage)
+        }
+        print("Successfully inserted row")
+    }
+    func boolToChar(test: Bool) -> String {
+        if test {
+            return "y"
+        }
+        else {
+            return "n"
+        }
+    }
+    func charToBool(char: String) -> Bool {
+        if char == "y" {
+            return true
+        }
+        else {
+            return false
+        }
     }
 }
 //extension SQLiteDatabase {

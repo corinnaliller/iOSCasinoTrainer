@@ -11,12 +11,14 @@ import UIKit
 
 class Player : Codable {
     
+    let id: Int
     var playerName: String
     var initialCapital: Float
     var balance: Float
     var bjStats: BlackJackStats
     var rouStats: RouletteStats
     init() {
+        id = 0
         playerName = "Placeholder"
         balance = 10
         initialCapital = 20
@@ -24,7 +26,8 @@ class Player : Codable {
         rouStats = RouletteStats()
     }
     
-    init(name: String, capital: Float) {
+    init(id: Int, name: String, capital: Float) {
+        self.id = id
         playerName = name
         initialCapital = capital
         balance = initialCapital
@@ -32,6 +35,7 @@ class Player : Codable {
         rouStats = RouletteStats()
     }
     enum CodingKeys : String, CodingKey {
+        case id = "ID"
         case playerName = "PlayerName"
         case initialCapital = "InitialCapital"
         case balance = "Balance"

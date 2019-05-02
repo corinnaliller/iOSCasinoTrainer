@@ -244,7 +244,7 @@ class BlackJackLogic {
                 }
             }
         }
-        return BlackJackGameOver(outcome: outcome, prize: prize, stakes: stakes, insurance: insuranceMoney, bust: bustBetMoney, dd: doubleDown, bj: bJ, ts: ts, bbj: bankBJ, bwb: bankBust, ti: tookInsurance, bob: betOnBust, wb: bust)
+        return BlackJackGameOver(outcome: outcome, prize: prize, stakes: stakes, insurance: insuranceMoney, bust: bustBetMoney, dd: doubleDown, bj: bJ, ts: ts, bbj: bankBJ, bwb: bankBust, ti: tookInsurance, bob: betOnBust, wb: bust, points: playerPoints, bankPoints: bankPoints)
     }
 }
 
@@ -262,8 +262,10 @@ struct BlackJackGameOver {
     var tookInsurance: Bool
     var betOnBust: Bool
     var wentBust: Bool
+    var points: Int
+    var bankPoints: Int
     
-    init(outcome: Int, prize: Float, stakes: Float, insurance: Float, bust: Float, dd: Bool, bj: Bool, ts: Bool, bbj: Bool, bwb: Bool, ti: Bool, bob: Bool, wb: Bool) {
+    init(outcome: Int, prize: Float, stakes: Float, insurance: Float, bust: Float, dd: Bool, bj: Bool, ts: Bool, bbj: Bool, bwb: Bool, ti: Bool, bob: Bool, wb: Bool, points: Int, bankPoints: Int) {
         winOrLose = Status.init(rawValue: outcome)!
         prizeMoney = prize
         stakesMoney = stakes
@@ -277,6 +279,8 @@ struct BlackJackGameOver {
         tookInsurance = ti
         betOnBust = bob
         wentBust = wb
+        self.points = points
+        self.bankPoints = bankPoints
     }
     func description() -> String {
         let answer = """
