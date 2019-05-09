@@ -1,0 +1,14 @@
+//
+//  DatabaseSelectResults.swift
+//  CasinoTrainer
+//
+//  Created by Corinna Liller on 09.05.19.
+//  Copyright © 2019 Corinna Liller. All rights reserved.
+//
+
+import Foundation
+
+struct GeneralBlackJackStatistics {
+    let allStats: [BlackJackOutcomes:Int]
+    
+}

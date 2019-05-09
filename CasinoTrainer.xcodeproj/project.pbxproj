@@ -30,6 +30,7 @@
 		470CD50921A16E3100981833 /* RouletteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470CD50821A16E3100981833 /* RouletteController.swift */; };
 		470CD50B21A1707F00981833 /* BlackJackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470CD50A21A1707F00981833 /* BlackJackController.swift */; };
 		470CD50D21A1709400981833 /* BlackJackStatisticsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470CD50C21A1709400981833 /* BlackJackStatisticsController.swift */; };
+		471304AD22841DCB00C7C43E /* DatabaseSelectResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471304AC22841DCB00C7C43E /* DatabaseSelectResults.swift */; };
 		4717734922587EEC00C2594C /* Blackjack.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4717734822587EEC00C2594C /* Blackjack.storyboard */; };
 		4717734B2258815900C2594C /* Roulette.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4717734A2258815900C2594C /* Roulette.storyboard */; };
 		4717734D22588A3E00C2594C /* Statistics.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4717734C22588A3E00C2594C /* Statistics.storyboard */; };
@@ -89,6 +90,7 @@
 		470CD50821A16E3100981833 /* RouletteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouletteController.swift; sourceTree = "<group>"; };
 		470CD50A21A1707F00981833 /* BlackJackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackJackController.swift; sourceTree = "<group>"; };
 		470CD50C21A1709400981833 /* BlackJackStatisticsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackJackStatisticsController.swift; sourceTree = "<group>"; };
+		471304AC22841DCB00C7C43E /* DatabaseSelectResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseSelectResults.swift; sourceTree = "<group>"; };
 		4717734822587EEC00C2594C /* Blackjack.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Blackjack.storyboard; sourceTree = "<group>"; };
 		4717734A2258815900C2594C /* Roulette.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Roulette.storyboard; sourceTree = "<group>"; };
 		4717734C22588A3E00C2594C /* Statistics.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Statistics.storyboard; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 				34E02B772277091A0025274F /* DatabaseHelpers.swift */,
 				34E02B7922770B590025274F /* DatabaseTables.swift */,
 				4750E7D72277609500554F23 /* Database.swift */,
+				471304AC22841DCB00C7C43E /* DatabaseSelectResults.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -404,6 +407,7 @@
 				34E02B7A22770B590025274F /* DatabaseTables.swift in Sources */,
 				470CD50521A16D3200981833 /* CasinoEntranceController.swift in Sources */,
 				349BE82821E62973004C22BF /* StatisticsDataSources.swift in Sources */,
+				471304AD22841DCB00C7C43E /* DatabaseSelectResults.swift in Sources */,
 				4717E77721A5788B0064908D /* ModelControllers.swift in Sources */,
 				349BE82421E6285C004C22BF /* RouletteCell.swift in Sources */,
 				3495BC0422142D91004B007A /* DataSaver.swift in Sources */,

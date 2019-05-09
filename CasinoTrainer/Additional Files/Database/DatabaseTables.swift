@@ -91,9 +91,9 @@ extension BlackJackGame : SQLTable {
         Prize DOUBLE NOT NULL,
         Points INT NOT NULL,
         Bank_Points INT NOT NULL,
-        Bet_on_Bust VARCHAR(1) NOT NULL,
-        Took_Insurance VARCHAR(1) NOT NULL,
-        Doubled_down VARCHAR(1) NOT NULL,
+        Bet_on_Bust Int NOT NULL,
+        Took_Insurance Int NOT NULL,
+        Doubled_down Int NOT NULL,
         FOREIGN KEY (Id) REFERENCES \(TableNames.Guest.rawValue) (Id)
         );
         """
@@ -153,6 +153,4 @@ extension BlackJackInsurance : SQLTable {
         );
         """
     }
-    
-    
 }

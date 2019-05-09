@@ -120,35 +120,35 @@ extension RouletteDataAnalysis : UITableViewDataSource {
     
 }
 
-class MetaDataAnalysis : NSObject {
-    var metaData = [MetaData]()
-    
-    init(guest: Player) {
-        metaData = [
-            MetaData(text: "Won alltogether", MathHelper.roundFloat(number: guest.balance - guest.initialCapital)),
-            MetaData(text: "Won at Black Jack", guest.bjStats.winsAndLosses.reduce(0,+)),
-            MetaData(text: "Won at Roulette", guest.rouStats.winsAndLosses.reduce(0,+)),
-            MetaData(text: "Average Black Jack Stakes", MathHelper.roundFloat(number: guest.bjStats.allStakes.reduce(0,+)/Float(guest.bjStats.allStakes.count))),
-            MetaData(text: "Average Roulette Stakes", guest.rouStats.allStakes.reduce(0,+) / Float(guest.rouStats.allStakes.count)),
-            MetaData(text: "Average Black Jack Wins", MathHelper.roundFloat(number: guest.bjStats.winsAndLosses.reduce(0,+)/Float(guest.bjStats.winsAndLosses.count))),
-            MetaData(text: "Average Roulette Wins", MathHelper.roundFloat(number: guest.rouStats.winsAndLosses.reduce(0,+)/Float(guest.rouStats.winsAndLosses.count))),
-            MetaData(text: "Average Insurance Payouts (Black Jack)", guest.bjStats.insurances.reduce(0,+)/Float(guest.bjStats.insurances.count)),
-            MetaData(text: "Average Bust Bet Payout", guest.bjStats.bustBets.reduce(0, +)/Float(guest.bjStats.bustBets.count))
-        ]
-    }
-}
-extension MetaDataAnalysis : UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return metaData.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: MetaStatisticsCell.self)) as! MetaStatisticsCell
-        let strings = metaData[indexPath.row]
-        cell.labelText = strings.name
-        cell.absoluteText = strings.numberString
-        return cell
-    }
-    
-    
-}
+//class MetaDataAnalysis : NSObject {
+//    var metaData = [MetaData]()
+//    
+//    init(guest: Player) {
+//        metaData = [
+//            MetaData(text: "Won alltogether", MathHelper.roundFloat(number: guest.balance - guest.initialCapital)),
+//            MetaData(text: "Won at Black Jack", guest.bjStats.winsAndLosses.reduce(0,+)),
+//            MetaData(text: "Won at Roulette", guest.rouStats.winsAndLosses.reduce(0,+)),
+//            MetaData(text: "Average Black Jack Stakes", MathHelper.roundFloat(number: guest.bjStats.allStakes.reduce(0,+)/Float(guest.bjStats.allStakes.count))),
+//            MetaData(text: "Average Roulette Stakes", guest.rouStats.allStakes.reduce(0,+) / Float(guest.rouStats.allStakes.count)),
+//            MetaData(text: "Average Black Jack Wins", MathHelper.roundFloat(number: guest.bjStats.winsAndLosses.reduce(0,+)/Float(guest.bjStats.winsAndLosses.count))),
+//            MetaData(text: "Average Roulette Wins", MathHelper.roundFloat(number: guest.rouStats.winsAndLosses.reduce(0,+)/Float(guest.rouStats.winsAndLosses.count))),
+//            MetaData(text: "Average Insurance Payouts (Black Jack)", guest.bjStats.insurances.reduce(0,+)/Float(guest.bjStats.insurances.count)),
+//            MetaData(text: "Average Bust Bet Payout", guest.bjStats.bustBets.reduce(0, +)/Float(guest.bjStats.bustBets.count))
+//        ]
+//    }
+//}
+//extension MetaDataAnalysis : UITableViewDataSource {
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return metaData.count
+//    }
+//    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: MetaStatisticsCell.self)) as! MetaStatisticsCell
+//        let strings = metaData[indexPath.row]
+//        cell.labelText = strings.name
+//        cell.absoluteText = strings.numberString
+//        return cell
+//    }
+//    
+//    
+//}

@@ -15,120 +15,125 @@ class Player : Codable {
     var playerName: String
     var initialCapital: Float
     var balance: Float
-    var bjStats: BlackJackStats
-    var rouStats: RouletteStats
+//    var bjStats: BlackJackStats
+//    var rouStats: RouletteStats
     init() {
         id = 0
         playerName = "Placeholder"
         balance = 10
         initialCapital = 20
-        bjStats = BlackJackStats()
-        rouStats = RouletteStats()
+//        bjStats = BlackJackStats()
+//        rouStats = RouletteStats()
     }
-    
+    init(guest: CasinoGuest) {
+        self.id = Int(guest.id)
+        self.playerName = String(guest.name)
+        self.balance = Float(guest.balance)
+        self.initialCapital = Float(guest.capital)
+    }
     init(id: Int, name: String, capital: Float) {
         self.id = id
         playerName = name
         initialCapital = capital
         balance = initialCapital
-        bjStats = BlackJackStats()
-        rouStats = RouletteStats()
+//        bjStats = BlackJackStats()
+//        rouStats = RouletteStats()
     }
     enum CodingKeys : String, CodingKey {
         case id = "ID"
         case playerName = "PlayerName"
         case initialCapital = "InitialCapital"
         case balance = "Balance"
-        case bjStats = "BlackjackStats"
-        case rouStats = "RouletteStats"
+//        case bjStats = "BlackjackStats"
+//        case rouStats = "RouletteStats"
     }
     
-    func endBlackJack(outcome: BlackJackGameOver) {
-        switch outcome.winOrLose {
-        case .lost:
-            bjStats.gamesLost += 1
-            bjStats.winsAndLosses.append(-outcome.stakesMoney)
-        case .tie:
-            bjStats.outcomes[BlackJackOutcomes.gamesTied]! += 1
-            bjStats.winsAndLosses.append(0)
-        case .won:
-            bjStats.gamesWon += 1
-            bjStats.winsAndLosses.append(outcome.prizeMoney)
-        case .bjwon:
-            bjStats.gamesWon += 1
-            bjStats.outcomes[BlackJackOutcomes.wonWithBlackJack]! += 1
-            bjStats.winsAndLosses.append(outcome.prizeMoney)
-        }
-        balance += outcome.prizeMoney + outcome.insurancePayout + outcome.bustBetPayout
-        bjStats.allStakes.append(outcome.stakesMoney)
-        bjStats.bustBets.append(outcome.bustBetPayout)
-        if outcome.tookInsurance {
-            balance += outcome.insurancePayout
-            bjStats.outcomes[BlackJackOutcomes.tookInsurance]! += 1
-            if outcome.insurancePayout > 0 {
-                bjStats.outcomes[BlackJackOutcomes.insuranceWasPaidOut]! += 1
-            }
-        }
-        if outcome.betOnBust {
-            balance += outcome.bustBetPayout
-            bjStats.outcomes[BlackJackOutcomes.betOnBust]! += 1
-            if outcome.bustBetPayout > 0 {
-                bjStats.outcomes[BlackJackOutcomes.bankWentBust]! += 1
-            }
-        }
-        if outcome.hadBlackJack {
-            bjStats.outcomes[BlackJackOutcomes.hadBlackJack]! += 1
-        }
-        if outcome.hadTripleSeven {
-            bjStats.outcomes[BlackJackOutcomes.hadTripleSeven]! += 1
-        }
-        if outcome.bankHadBlackJack {
-            bjStats.outcomes[BlackJackOutcomes.bankHadBlackJack]! += 1
-            if outcome.winOrLose == Status.lost {
-                bjStats.outcomes[BlackJackOutcomes.bankWonWithBlackJack]! += 1
-            }
-        }
-        if outcome.wentBust {
-            bjStats.outcomes[BlackJackOutcomes.playerWentBust]! += 1
-        }
-        if outcome.doubledDown {
-            bjStats.outcomes[BlackJackOutcomes.doubledDown]! += 1
-        }
-        if outcome.bankWentBust {
-            bjStats.outcomes[BlackJackOutcomes.bankWentBust]! += 1
-        }
-    }
-    func endRoulette(outcome: RouletteGameOver) {
-        if outcome.outcome {
-            rouStats.gamesWon += 1
-            balance += outcome.prize
-        }
-        else {
-            rouStats.gamesLost += 1
-        }
-        rouStats.winsAndLosses.append(outcome.prize)
-        rouStats.allStakes.append(outcome.stakes)
-        if let outside = outcome.bet as? OutsideBet {
-            rouStats.numberOfOutsideGames += 1
-            if outcome.outcome {
-                rouStats.wonOutside += 1
-                rouStats.outsideOutcomes[outside.type]![0] += 1
-            }
-            else {
-                rouStats.outsideOutcomes[outside.type]![1] += 1
-            }
-        }
-        else if let inside = outcome.bet as? InsideBet {
-            rouStats.numberOfInsideGames += 1
-            if outcome.outcome {
-                rouStats.wonInside += 1
-                rouStats.insideOutcomes[inside.type]![0] += 1
-            }
-            else {
-                rouStats.insideOutcomes[inside.type]![1] += 1
-            }
-        }
-    }
+//    func endBlackJack(outcome: BlackJackGameOver) {
+//        switch outcome.winOrLose {
+//        case .lost:
+//            bjStats.gamesLost += 1
+//            bjStats.winsAndLosses.append(-outcome.stakesMoney)
+//        case .tie:
+//            bjStats.outcomes[BlackJackOutcomes.gamesTied]! += 1
+//            bjStats.winsAndLosses.append(0)
+//        case .won:
+//            bjStats.gamesWon += 1
+//            bjStats.winsAndLosses.append(outcome.prizeMoney)
+//        case .bjwon:
+//            bjStats.gamesWon += 1
+//            bjStats.outcomes[BlackJackOutcomes.wonWithBlackJack]! += 1
+//            bjStats.winsAndLosses.append(outcome.prizeMoney)
+//        }
+//        balance += outcome.prizeMoney + outcome.insurancePayout + outcome.bustBetPayout
+//        bjStats.allStakes.append(outcome.stakesMoney)
+//        bjStats.bustBets.append(outcome.bustBetPayout)
+//        if outcome.tookInsurance {
+//            balance += outcome.insurancePayout
+//            bjStats.outcomes[BlackJackOutcomes.tookInsurance]! += 1
+//            if outcome.insurancePayout > 0 {
+//                bjStats.outcomes[BlackJackOutcomes.insuranceWasPaidOut]! += 1
+//            }
+//        }
+//        if outcome.betOnBust {
+//            balance += outcome.bustBetPayout
+//            bjStats.outcomes[BlackJackOutcomes.betOnBust]! += 1
+//            if outcome.bustBetPayout > 0 {
+//                bjStats.outcomes[BlackJackOutcomes.bankWentBust]! += 1
+//            }
+//        }
+//        if outcome.hadBlackJack {
+//            bjStats.outcomes[BlackJackOutcomes.hadBlackJack]! += 1
+//        }
+//        if outcome.hadTripleSeven {
+//            bjStats.outcomes[BlackJackOutcomes.hadTripleSeven]! += 1
+//        }
+//        if outcome.bankHadBlackJack {
+//            bjStats.outcomes[BlackJackOutcomes.bankHadBlackJack]! += 1
+//            if outcome.winOrLose == Status.lost {
+//                bjStats.outcomes[BlackJackOutcomes.bankWonWithBlackJack]! += 1
+//            }
+//        }
+//        if outcome.wentBust {
+//            bjStats.outcomes[BlackJackOutcomes.playerWentBust]! += 1
+//        }
+//        if outcome.doubledDown {
+//            bjStats.outcomes[BlackJackOutcomes.doubledDown]! += 1
+//        }
+//        if outcome.bankWentBust {
+//            bjStats.outcomes[BlackJackOutcomes.bankWentBust]! += 1
+//        }
+//    }
+//    func endRoulette(outcome: RouletteGameOver) {
+//        if outcome.outcome {
+//            rouStats.gamesWon += 1
+//            balance += outcome.prize
+//        }
+//        else {
+//            rouStats.gamesLost += 1
+//        }
+//        rouStats.winsAndLosses.append(outcome.prize)
+//        rouStats.allStakes.append(outcome.stakes)
+//        if let outside = outcome.bet as? OutsideBet {
+//            rouStats.numberOfOutsideGames += 1
+//            if outcome.outcome {
+//                rouStats.wonOutside += 1
+//                rouStats.outsideOutcomes[outside.type]![0] += 1
+//            }
+//            else {
+//                rouStats.outsideOutcomes[outside.type]![1] += 1
+//            }
+//        }
+//        else if let inside = outcome.bet as? InsideBet {
+//            rouStats.numberOfInsideGames += 1
+//            if outcome.outcome {
+//                rouStats.wonInside += 1
+//                rouStats.insideOutcomes[inside.type]![0] += 1
+//            }
+//            else {
+//                rouStats.insideOutcomes[inside.type]![1] += 1
+//            }
+//        }
+//    }
 }
 
 protocol Stats : Codable {
@@ -138,19 +143,21 @@ protocol Stats : Codable {
     var allStakes: [Float] { get set }
 }
 enum BlackJackOutcomes : String, Codable {
-    case gamesTied = "GamesTied"
-    case hadBlackJack = "HadBlackJack"
-    case hadTripleSeven = "HadTripleSeven"
-    case wonWithBlackJack = "WonWithBlackJack"
-    case bankHadBlackJack = "BankHadBlackJack"
-    case bankWonWithBlackJack = "BankWonWithBlackJack"
-    case insuranceWasPaidOut = "InsuranceWasPaidOut"
-    case tookInsurance = "TookInsurance"
-    case betOnBust = "BetOnBust"
-    case bustBetsWon = "BustBetsWon"
-    case doubledDown = "DoubledDown"
-    case bankWentBust = "BankWentBust"
-    case playerWentBust = "PlayerWentBust"
+    case gamesWon = "Games Won"
+    case gamesTied = "Games Tied"
+    case hadBlackJack = "Had Black Jack"
+    case hadTripleSeven = "Had Triple Seven"
+    case wonWithBlackJack = "Won With BlackJack"
+    case bankHadBlackJack = "Bank Had BlackJack"
+    case bankWonWithBlackJack = "Bank Won With BlackJack"
+    case insuranceWasPaidOut = "Insurance Was Paid Out"
+    case tookInsurance = "Took Insurance"
+    case betOnBust = "Bet On Bust"
+    case bustBetsWon = "Bust Bets Won"
+    case doubledDown = "Doubled Down"
+    case wonAfterDoubleDown = "Won After Doubleing Down"
+    case bankWentBust = "Bank Went Bust"
+    case playerWentBust = "Player Went Bust"
 }
 
 class BlackJackStats : Stats, Codable {
