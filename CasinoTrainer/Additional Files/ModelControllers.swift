@@ -9,6 +9,9 @@
 import Foundation
 
 class BlackJackLogicController {
+    let db: SQLiteDatabase?
+    let player: Player
+    let view: BlackJackController
     let logic: BlackJackLogic
     var stakes: [Float]
     var insuranceMoney: Float
@@ -29,7 +32,13 @@ class BlackJackLogicController {
     var betOnBust: Bool
     var tookInsurance: Bool
     
-    init() {
+    init(player: Player, view: BlackJackController) {
+        db = try! SQLiteDatabase.open(path: Database.CasinoTrainer.rawValue)
+        if db == nil {
+            print("Could not open database.")
+        }
+        self.player = player
+        self.view = view
         logic = BlackJackLogic()
         stakes = [0,0,0]
         insuranceMoney = 0
@@ -167,6 +176,7 @@ class BlackJackLogicController {
         else {
             result = logic.gameOver(playerCards: cards[i], bankCards: cards[0], stakes: stakes[i], tookInsurance: tookInsurance, insurance: insuranceMoney, betOnBust: betOnBust, bustBet: 0, doubleDown: doubleDown[i], split: false)
         }
+        try? db?.insertBlackJackGameRow(result, player: player)
         return result
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 
 let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-private enum Database: String {
+enum Database: String {
     case CasinoTrainer
     
     var path: String {

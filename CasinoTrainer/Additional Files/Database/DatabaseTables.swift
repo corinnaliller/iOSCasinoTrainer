@@ -32,7 +32,7 @@ struct CasinoGuest {
 extension CasinoGuest : SQLTable {
     static var createStatement: String {
         return """
-        CREATE TABLE \(TableNames.Guest.rawValue) (
+        CREATE TABLE IF NOT EXISTS \(TableNames.Guest.rawValue) (
         Id INT PRIMARY KEY AUTOINCREMENT,
         Name VARCHAR(255) NOT NULL UNIQUE,
         Capital DOUBLE NOT NULL,
@@ -79,7 +79,7 @@ struct BlackJackGame {
 extension BlackJackGame : SQLTable {
     static var createStatement: String {
         return """
-        CREATE TABLE \(TableNames.BlackJackGames.rawValue) (
+        CREATE TABLE IF NOT EXISTS \(TableNames.BlackJackGames.rawValue) (
         Id INT NOT NULL,
         GameNo INT PRIMARY KEY AUTOINCREMENT,
         Status VARCHAR(1) NOT NULL,
@@ -115,7 +115,7 @@ class BlackJackBustBet {
 extension BlackJackBustBet : SQLTable {
     static var createStatement: String {
         return """
-        CREATE TABLE \(TableNames.BlackJackBustBet.rawValue) (
+        CREATE TABLE IF NOT EXISTS \(TableNames.BlackJackBustBet.rawValue) (
         Id INT NOT NULL,
         GameNo INT NOT NULL,
         Stake DOUBLE NOT NULL,
@@ -142,7 +142,7 @@ class BlackJackInsurance {
 extension BlackJackInsurance : SQLTable {
     static var createStatement: String {
         return """
-        CREATE TABLE \(TableNames.BlackJackInsurance.rawValue) (
+        CREATE TABLE IF NOT EXISTS \(TableNames.BlackJackInsurance.rawValue) (
         Id INT NOT NULL,
         GameNo INT NOT NULL,
         Stake DOUBLE NOT NULL,

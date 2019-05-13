@@ -9,6 +9,7 @@
 import Foundation
 import SQLite3
 
+/// BODY
 class SQLiteDatabase {
     fileprivate let dbPointer: OpaquePointer?
     
@@ -49,6 +50,8 @@ class SQLiteDatabase {
         }
     }
 }
+
+/// CREATE AND INSERT
 extension SQLiteDatabase {
     func prepareStatement(sql: String) throws -> OpaquePointer? {
         var statement: OpaquePointer? = nil
@@ -67,7 +70,7 @@ extension SQLiteDatabase {
         }
         print("\(table) table created")
     }
-    func insertPlayer(_ player: String, capital: Float) throws {
+    func insertPlayer(_ player: String, capital: Float) throws -> Int {
         let insertPlayerSQL = "INSERT INTO \(TableNames.Guest.rawValue) VALUES (null, ?, ?, ?);"
         let insertStatement = try prepareStatement(sql: insertPlayerSQL)
         defer {
@@ -81,6 +84,9 @@ extension SQLiteDatabase {
             throw SQLiteError.Step(message: errorMessage)
         }
         print("Successfully inserted row")
+        let id = sqlite3_last_insert_rowid(insertStatement)
+        
+        return Int(id)
     }
     func insertBlackJackGameRow(_ game: BlackJackGameOver, player: Player) throws {
         let insertBlackJackSQL = "INSERT INTO \(TableNames.BlackJackGames.rawValue) (Id, Status, Had_Blackjack, Bust, Bank_went_bust, Bank_had_Blackjack, Stakes, Prize, Points, Bank_Points, Bet_on_Bust, Took_Insurance, Doubled_down) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
@@ -148,6 +154,8 @@ extension SQLiteDatabase {
         }
     }
 }
+
+/// SELECT
 extension SQLiteDatabase {
     func gamesWonAfterDoubleDown(player: Player) -> Int {
         let querySql = "SELECT count(Doubled_down) FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ? AND Status = 2;"
@@ -168,7 +176,7 @@ extension SQLiteDatabase {
     }
     func getBlackJackStatistics(player: Player) -> GeneralBlackJackStatistics? {
         // Change here
-        let querySql = "SELECT * FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ? AND Status = 2;"
+        let querySql = "SELECT * FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ?;"
         guard let queryStatement = try? prepareStatement(sql: querySql) else {
             return nil
         }
@@ -184,7 +192,27 @@ extension SQLiteDatabase {
         //let wonDD = sqlite3_column_int(queryStatement, 0)
         return nil
     }
-    
+    func getPlayer(id: Int) throws -> CasinoGuest? {
+        let querySql = "SELECT * FROM \(TableNames.Guest.rawValue) WHERE Id = ?;"
+        guard let queryStatement = try? prepareStatement(sql: querySql) else {
+            return nil
+        }
+        defer {
+            sqlite3_finalize(queryStatement)
+        }
+        guard sqlite3_bind_int(queryStatement, 1, Int32(id)) == SQLITE_OK else {
+            return nil
+        }
+        guard sqlite3_step(queryStatement) == SQLITE_ROW else {
+            return nil
+        }
+        let playerID = sqlite3_column_int(queryStatement, 0)
+        let playerName = String(cString: sqlite3_column_text(queryStatement, 1)) as NSString
+        let playerCapital = sqlite3_column_double(queryStatement, 2)
+        let playerBalance = sqlite3_column_double(queryStatement, 3)
+        //let wonDD = sqlite3_column_int(queryStatement, 0)
+        return CasinoGuest(id: playerID, name: playerName, capital: playerCapital, balance: playerBalance)
+    }
 //    func blackJackGame(id: Int32) -> BlackJackGame? {
 //        let querySql = "SELECT * FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ?;"
 //        guard let queryStatement = try? prepareStatement(sql: querySql) else {
@@ -204,4 +232,23 @@ extension SQLiteDatabase {
 //        let name = String(cString: queryResultCol1!) as NSString
 //        return Contact(id: id, name: name)
 //    }
+}
+
+/// UPDATE
+extension SQLiteDatabase {
+    func updateBalance(player: Player) throws {
+        let updateSQL = "UPDATE \(TableNames.Guest.rawValue) SET Balance = ? WHERE Id = ?"
+        guard let updateStatement = try? prepareStatement(sql: updateSQL) else {
+            throw SQLiteError.Prepare(message: "Could not prepare statement for update of balance")
+        }
+        defer {
+            sqlite3_finalize(updateStatement)
+        }
+        guard sqlite3_bind_double(updateStatement, 1, Double(player.balance)) == SQLITE_OK && sqlite3_bind_int(updateStatement, 2, Int32(player.id)) == SQLITE_OK else {
+            throw SQLiteError.Bind(message: "Could not bind data for balance")
+        }
+        guard sqlite3_step(updateStatement) == SQLITE_DONE else {
+            throw SQLiteError.Step(message: "Could not update balance")
+        }
+    }
 }

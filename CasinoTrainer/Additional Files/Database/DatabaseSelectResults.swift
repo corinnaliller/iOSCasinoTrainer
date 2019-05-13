@@ -11,4 +11,10 @@ import Foundation
 struct GeneralBlackJackStatistics {
     let allStats: [BlackJackOutcomes:Int]
     
+    init() {
+        allStats = [
+            BlackJackOutcomes.gamesWon:0,
+            BlackJackOutcomes.gamesTied:0
+        ]
+    }
 }
