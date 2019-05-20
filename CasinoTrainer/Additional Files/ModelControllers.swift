@@ -182,10 +182,19 @@ class BlackJackLogicController {
 }
 class RouletteLogicController {
     let logic: RouletteLogic
+    let view: RouletteController
+    let player: Player
+    let db: SQLiteDatabase?
     var bet: RouletteBet?
     var stakes: Float?
-    init() {
+    init(player: Player, view: RouletteController) {
+        db = try! SQLiteDatabase.open(path: Database.CasinoTrainer.rawValue)
+        if db == nil {
+            print("Could not open database.")
+        }
         logic = RouletteLogic()
+        self.player = player
+        self.view = view
     }
     func rienNeVasPlus(bet: RouletteBet,stakes: Float) -> RouletteGameOver {
         self.bet = bet
@@ -199,6 +208,8 @@ class RouletteLogicController {
         else {
             prizeMoney = -stakes
         }
-        return RouletteGameOver(winning:logic.winningNumber,outcome: win, bet: bet, stakes: stakes,prize: prizeMoney)
+        let outcome = RouletteGameOver(winning:logic.winningNumber,outcome: win, bet: bet, stakes: stakes,prize: prizeMoney)
+        try? db?.insertRouletteGameRow(outcome, player: player)
+        return outcome
     }
 }

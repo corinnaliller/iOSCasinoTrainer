@@ -137,6 +137,31 @@ extension SQLiteDatabase {
         }
         print("Successfully inserted insurance row")
     }
+    func insertRouletteGameRow(_ game: RouletteGameOver, player: Player) throws {
+        let insertRouletteSQL = "INSERT INTO \(TableNames.RouletteGames.rawValue) (Id, Inside_or_Outside, Bet_type, Stake, Payout, won) VALUES (?, ?, ?, ?, ?, ?);"
+        let insertStatement = try prepareStatement(sql: insertRouletteSQL)
+        defer {
+            sqlite3_finalize(insertStatement)
+        }
+        let insideOutside: String
+        let betType: String
+        if let b = game.bet as? InsideBet {
+            insideOutside = "Inside"
+            betType = b.type.rawValue
+        }
+        else {
+            let b = game.bet as! OutsideBet
+            insideOutside = "Outside"
+            betType = b.type.rawValue
+        }
+        guard sqlite3_bind_int(insertStatement, 1, Int32(player.id)) == SQLITE_OK && sqlite3_bind_text(insertStatement, 2, insideOutside, -1, nil) == SQLITE_OK && sqlite3_bind_text(insertStatement, 3, betType, -1, nil) == SQLITE_OK && sqlite3_bind_double(insertStatement, 4, Double(game.stakes)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 5, Double(game.prize)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 6, boolToInt(test: game.outcome)) == SQLITE_OK else {
+            throw SQLiteError.Bind(message: errorMessage)
+        }
+        guard sqlite3_step(insertStatement) == SQLITE_DONE else {
+            throw SQLiteError.Step(message: errorMessage)
+        }
+        print("Successfully inserted Roulette row")
+    }
     func boolToInt(test: Bool) -> Int32 {
         if test {
             return 1

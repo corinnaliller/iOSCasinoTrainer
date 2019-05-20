@@ -43,7 +43,7 @@ extension CasinoGuest : SQLTable {
     
     
 }
-struct BlackJackGame {
+class BlackJackGame {
     let id: Int32
     let gameNo: Int32
     let status: Int32
@@ -150,6 +150,41 @@ extension BlackJackInsurance : SQLTable {
         PRIMARY KEY (Id, GameNo),
         FOREIGN KEY (Id) REFERENCES \(TableNames.Guest.rawValue) (Id)
         FOREIGN KEY (GameNo) REFERENCES \(TableNames.BlackJackGames.rawValue) (GameNo)
+        );
+        """
+    }
+}
+class RouletteGame {
+    let id: Int32
+    let gameNo: Int32
+    let insideOutside: String
+    let betType: String
+    let stake: Double
+    let payout: Double?
+    let won: Bool
+    
+    init(id: Int32, no: Int32, insideOutside: String, bettype: String, stake: Double, payout: Double?, won: Bool) {
+        self.id = id
+        self.gameNo = no
+        self.insideOutside = insideOutside
+        self.betType = bettype
+        self.stake = stake
+        self.payout = payout
+        self.won = won
+    }
+}
+extension RouletteGame : SQLTable {
+    static var createStatement: String {
+        return """
+        CREATE TABLE IF NOT EXISTS \(TableNames.RouletteGames.rawValue) (
+        Id INT NOT NULL,
+        GameNo INT PRIMARY KEY AUTOINCREMENT,
+        Inside_or_Outside VARCHAR2(8) NOT NULL,
+        Bet_type VARCHAR2(20) NOT NULL,
+        Stake DOUBLE NOT NULL,
+        Payout DOUBLE,
+        Won INT NOT NULL,
+        FOREIGN KEY (Id) REFERENCES \(TableNames.Guest.rawValue) (Id)
         );
         """
     }
