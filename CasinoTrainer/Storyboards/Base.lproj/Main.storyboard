@@ -135,15 +135,25 @@
                                     <action selector="enterAgain:" destination="L4f-C1-tEN" eventType="touchUpInside" id="iO3-DX-E3M"/>
                                 </connections>
                             </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="feJ-WR-OLP">
+                                <rect key="frame" x="123" y="52" width="129" height="29"/>
+                                <segments>
+                                    <segment title="Register"/>
+                                    <segment title="Login"/>
+                                </segments>
+                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.56031829119999998" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="hJd-Yf-ArB" firstAttribute="top" secondItem="jcG-wP-4qg" secondAttribute="bottom" constant="15" id="2e0-Xz-jUw"/>
                             <constraint firstItem="Ev4-Re-DS4" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="ARV-lJ-q4P"/>
+                            <constraint firstItem="feJ-WR-OLP" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="P4g-iD-wyt"/>
                             <constraint firstItem="gWO-2Z-dhy" firstAttribute="bottom" secondItem="Ev4-Re-DS4" secondAttribute="bottom" constant="60" id="VJC-ft-Mhv"/>
                             <constraint firstItem="hJd-Yf-ArB" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="c5e-AM-aoX"/>
                             <constraint firstItem="hJd-Yf-ArB" firstAttribute="centerY" secondItem="4s4-uX-RGK" secondAttribute="centerY" id="rd8-mm-yg8"/>
                             <constraint firstItem="jcG-wP-4qg" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="xar-LB-RoV"/>
+                            <constraint firstItem="feJ-WR-OLP" firstAttribute="top" secondItem="gWO-2Z-dhy" secondAttribute="top" constant="32" id="yOr-8g-oj6"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="gWO-2Z-dhy"/>
                     </view>
