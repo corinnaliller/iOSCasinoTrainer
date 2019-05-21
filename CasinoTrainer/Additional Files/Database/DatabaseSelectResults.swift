@@ -9,12 +9,62 @@
 import Foundation
 
 struct GeneralBlackJackStatistics {
-    let allStats: [BlackJackOutcomes:Int]
+    let allStats: [[BlackJackOutcomes:Int]]
     
     init() {
         allStats = [
-            BlackJackOutcomes.gamesWon:0,
-            BlackJackOutcomes.gamesTied:0
+            [
+                BlackJackOutcomes.gamesWon:0,
+                BlackJackOutcomes.gamesTied:0,
+                BlackJackOutcomes.gamesLost:0
+            ],
+            [
+                BlackJackOutcomes.hadBlackJack: 0,
+                BlackJackOutcomes.wonWithBlackJack: 0,
+                BlackJackOutcomes.hadTripleSeven: 0,
+                BlackJackOutcomes.playerWentBust: 0
+            ],
+            [
+                BlackJackOutcomes.bankHadBlackJack: 0,
+                BlackJackOutcomes.bankWonWithBlackJack: 0,
+                BlackJackOutcomes.tookInsurance: 0,
+                BlackJackOutcomes.insuranceWasPaidOut: 0,
+                BlackJackOutcomes.bankWentBust: 0,
+                BlackJackOutcomes.betOnBust: 0,
+                BlackJackOutcomes.bustBetsWon: 0
+            ],
+            [
+                BlackJackOutcomes.doubledDown: 0,
+                BlackJackOutcomes.wonAfterDoubleDown: 0
+            ]
+        ]
+    }
+    init(general: [Int], player: [Int], bank: [Int], extra: [Int]) {
+        allStats = [
+            [
+                BlackJackOutcomes.gamesWon: general[0],
+                BlackJackOutcomes.gamesTied:general[1],
+                BlackJackOutcomes.gamesLost:general[2]
+            ],
+            [
+                BlackJackOutcomes.hadBlackJack: player[0],
+                BlackJackOutcomes.wonWithBlackJack: player[1],
+                BlackJackOutcomes.hadTripleSeven: player[2],
+                BlackJackOutcomes.playerWentBust: player[3]
+            ],
+            [
+                BlackJackOutcomes.bankHadBlackJack: bank[0],
+                BlackJackOutcomes.bankWonWithBlackJack: bank[1],
+                BlackJackOutcomes.tookInsurance: bank[2],
+                BlackJackOutcomes.insuranceWasPaidOut: bank[3],
+                BlackJackOutcomes.bankWentBust: bank[4],
+                BlackJackOutcomes.betOnBust: bank[5],
+                BlackJackOutcomes.bustBetsWon: bank[6]
+            ],
+            [
+                BlackJackOutcomes.doubledDown: extra[0],
+                BlackJackOutcomes.wonAfterDoubleDown: extra[1]
+            ]
         ]
     }
 }

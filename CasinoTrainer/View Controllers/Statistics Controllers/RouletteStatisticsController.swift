@@ -17,7 +17,7 @@ class RouletteStatisticsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if guest != nil {
-            dataSource = RouletteDataAnalysis(rouStat: guest!.rouStats)
+            //dataSource = RouletteDataAnalysis(rouStat: guest!.rouStats)
         }
         rouletteTable.estimatedRowHeight = 113
         rouletteTable.rowHeight = UITableView.automaticDimension

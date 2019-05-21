@@ -145,6 +145,7 @@ protocol Stats : Codable {
 enum BlackJackOutcomes : String, Codable {
     case gamesWon = "Games Won"
     case gamesTied = "Games Tied"
+    case gamesLost = "Games Lost"
     case hadBlackJack = "Had Black Jack"
     case hadTripleSeven = "Had Triple Seven"
     case wonWithBlackJack = "Won With BlackJack"
