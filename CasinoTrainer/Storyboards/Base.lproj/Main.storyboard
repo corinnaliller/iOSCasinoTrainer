@@ -13,7 +13,7 @@
         <!--CasinoFoyerController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController title="CasinoFoyerController" id="BYZ-38-t0r" customClass="CasinoFoyerController" customModule="CasinoTrainer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CasinoFoyer" title="CasinoFoyerController" id="BYZ-38-t0r" customClass="CasinoFoyerController" customModule="CasinoTrainer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -123,18 +123,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ev4-Re-DS4">
-                                <rect key="frame" x="142" y="563" width="91" height="44"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                <state key="normal" title="Enter as">
-                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
-                                </state>
-                                <connections>
-                                    <action selector="enterAgain:" destination="L4f-C1-tEN" eventType="touchUpInside" id="iO3-DX-E3M"/>
-                                </connections>
-                            </button>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="feJ-WR-OLP">
                                 <rect key="frame" x="123" y="52" width="129" height="29"/>
                                 <segments>
@@ -142,14 +130,15 @@
                                     <segment title="Login"/>
                                 </segments>
                                 <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <connections>
+                                    <action selector="registerOrLogin:" destination="L4f-C1-tEN" eventType="valueChanged" id="7DF-uh-Oz9"/>
+                                </connections>
                             </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.56031829119999998" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="hJd-Yf-ArB" firstAttribute="top" secondItem="jcG-wP-4qg" secondAttribute="bottom" constant="15" id="2e0-Xz-jUw"/>
-                            <constraint firstItem="Ev4-Re-DS4" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="ARV-lJ-q4P"/>
                             <constraint firstItem="feJ-WR-OLP" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="P4g-iD-wyt"/>
-                            <constraint firstItem="gWO-2Z-dhy" firstAttribute="bottom" secondItem="Ev4-Re-DS4" secondAttribute="bottom" constant="60" id="VJC-ft-Mhv"/>
                             <constraint firstItem="hJd-Yf-ArB" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="c5e-AM-aoX"/>
                             <constraint firstItem="hJd-Yf-ArB" firstAttribute="centerY" secondItem="4s4-uX-RGK" secondAttribute="centerY" id="rd8-mm-yg8"/>
                             <constraint firstItem="jcG-wP-4qg" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="xar-LB-RoV"/>
@@ -158,8 +147,9 @@
                         <viewLayoutGuide key="safeArea" id="gWO-2Z-dhy"/>
                     </view>
                     <connections>
-                        <outlet property="bEnterAs" destination="Ev4-Re-DS4" id="fcw-nh-1KF"/>
+                        <outlet property="bEnter" destination="KNa-Nk-cq2" id="JgU-8L-Fpu"/>
                         <outlet property="lMoney" destination="BrS-D1-h7a" id="Kfr-9G-kWg"/>
+                        <outlet property="segCtrlLogin" destination="feJ-WR-OLP" id="BC3-i3-IMW"/>
                         <outlet property="slCapital" destination="FtI-SE-vZH" id="qU3-ih-UG8"/>
                         <outlet property="tUserName" destination="cY4-8P-S8K" id="FuL-7g-U0J"/>
                         <segue destination="Znp-OP-1Jd" kind="show" identifier="enterCasino" id="7d4-iX-91P"/>

@@ -10,11 +10,13 @@ import UIKit
 
 class CasinoFoyerController: UIViewController {
 
+//    var logoutBtn: UIBarButtonItem?
     var guest: Player?
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+//        logoutBtn = UIBarButtonItem(title: "logout", style: .done, target: self, action: #selector(logout))
+//        navigationItem.leftBarButtonItem = logoutBtn!
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.destination is BlackJackController {
@@ -56,6 +58,10 @@ class CasinoFoyerController: UIViewController {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         try? DataSaver.saveGuest(guest: guest!)
+    }
+    @objc private func logout() {
+        let entrance: CasinoEntranceController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CasinoEntranceController") as! CasinoEntranceController
+        self.navigationController?.popToViewController(entrance, animated: true)
     }
 }
 

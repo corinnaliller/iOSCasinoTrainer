@@ -13,13 +13,13 @@ import SQLite3
 class SQLiteDatabase {
     fileprivate let dbPointer: OpaquePointer?
     
-    fileprivate init(dbPointer: OpaquePointer?) {
+    init(dbPointer: OpaquePointer?) {
         self.dbPointer = dbPointer
     }
     deinit {
         sqlite3_close(dbPointer)
     }
-    fileprivate var errorMessage: String {
+    var errorMessage: String {
         if let errorPointer = sqlite3_errmsg(dbPointer) {
             let errorMessage = String(cString: errorPointer)
             return errorMessage
@@ -71,13 +71,13 @@ extension SQLiteDatabase {
         print("\(table) table created")
     }
     func insertPlayer(_ player: String, capital: Float) throws -> Int {
-        let insertPlayerSQL = "INSERT INTO \(TableNames.Guest.rawValue) VALUES (null, ?, ?, ?);"
+        let insertPlayerSQL = "INSERT INTO \(TableNames.Guest.rawValue) (Name, Capital, Balance) VALUES (?, ?, ?);"
         let insertStatement = try prepareStatement(sql: insertPlayerSQL)
         defer {
             sqlite3_finalize(insertStatement)
         }
         let playerName: NSString = player as NSString
-        guard sqlite3_bind_text(insertStatement, 2, playerName.utf8String, -1, nil) == SQLITE_OK && sqlite3_bind_double(insertStatement, 3, Double(capital)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 4, Double(capital)) == SQLITE_OK else {
+        guard sqlite3_bind_text(insertStatement, 1, playerName.utf8String, -1, nil) == SQLITE_OK && sqlite3_bind_double(insertStatement, 2, Double(capital)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 3, Double(capital)) == SQLITE_OK else {
             throw SQLiteError.Bind(message: errorMessage)
         }
         guard sqlite3_step(insertStatement) == SQLITE_DONE else {
@@ -217,15 +217,15 @@ extension SQLiteDatabase {
         //let wonDD = sqlite3_column_int(queryStatement, 0)
         return nil
     }
-    func getPlayer(id: Int) throws -> CasinoGuest? {
-        let querySql = "SELECT * FROM \(TableNames.Guest.rawValue) WHERE Id = ?;"
+    func getPlayer(name: String) throws -> CasinoGuest? {
+        let querySql = "SELECT * FROM \(TableNames.Guest.rawValue) WHERE Name = ?;"
         guard let queryStatement = try? prepareStatement(sql: querySql) else {
             return nil
         }
         defer {
             sqlite3_finalize(queryStatement)
         }
-        guard sqlite3_bind_int(queryStatement, 1, Int32(id)) == SQLITE_OK else {
+        guard sqlite3_bind_text(queryStatement, 1, name, -1, nil) == SQLITE_OK else {
             return nil
         }
         guard sqlite3_step(queryStatement) == SQLITE_ROW else {
