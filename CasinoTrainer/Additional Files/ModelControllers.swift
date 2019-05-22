@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class BlackJackLogicController {
     let db: SQLiteDatabase?
@@ -58,6 +59,7 @@ class BlackJackLogicController {
         twoAceSplit = false
         tookInsurance = false
         betOnBust = false
+        view.setForNewGame()
     }
     private func reset() {
         logic.checkDecks()
@@ -79,31 +81,79 @@ class BlackJackLogicController {
         twoAceSplit = false
         tookInsurance = false
         betOnBust = false
-        
+        view.setForNewGame()
     }
-    func startNewGame(newStakes: Float, newBustBet: Float) -> [String] {
+    func startNewGame() {
         reset()
-        stakes[1] = newStakes
-        bustBetMoney = newBustBet
+        view.switchBustBet.isHidden = true
+        stakes[1] = view.stakesMoney
+        bustBetMoney = view.bustBetMoney
+        player.balance -= (stakes[1]+bustBetMoney)
+        try? db?.updateBalance(player: player)
         if (bustBetMoney > 0) {
             betOnBust = true
+            view.lBustBet.isHidden = true
         }
-        cards[0][index[0]] = logic.drawCard()
-        index[0] += 1
-        cards[1][index[1]] = logic.drawCard()
-        index[1] += 1
-        cards[1][index[1]] = logic.drawCard()
-        index[1] += 1
-        bankHasAce = logic.bankHasAce(bankHand: cards[0])
-        blackJack[1] = logic.checkBlackJack(hand: cards[1])
-        handSplittable = logic.handSplittable(hand: [cards[1][0],cards[1][1]])
+        drawAndUnhideCard(c: logic.drawCard(), handIndex: 0)
+        drawAndUnhideCard(c: logic.drawCard(), handIndex: 1)
+        drawAndUnhideCard(c: logic.drawCard(), handIndex: 1)
         countPoints()
-        return [cards[0][0].imageDescription(),cards[1][0].imageDescription(),cards[1][1].imageDescription()]
+        setPointLabel(handIndex: 0)
+        setPointLabel(handIndex: 1)
+//        cards[0][index[0]] = logic.drawCard()
+//        view.cards?[0][index[0]].image = UIImage(named: cards[0][index[0]].imageDescription())
+//        view.cards?[0][index[0]].isHidden = false
+//        index[0] += 1
+//        cards[1][index[1]] = logic.drawCard()
+//        index[1] += 1
+//        cards[1][index[1]] = logic.drawCard()
+//        index[1] += 1
+        view.unhideButtonsForGame()
+        if logic.bankHasAce(bankHand: cards[0]) {
+            bankHasAce = true
+            view.bPlay.setTitle("buy insurance", for: .normal)
+            view.slStakes.maximumValue = player.balance
+            view.slStakes.minimumValue = 0
+            view.slStakes.value = 0
+        }
+        else {
+            view.slStakes.isHidden = true
+            view.bPlay.isHidden = true
+        }
+        if logic.checkBlackJack(hand: cards[1]) {
+            blackJack[1] = true
+        }
+        if logic.handSplittable(hand: [cards[1][0],cards[1][1]]) {
+            view.bSplit.isHidden = false
+        }
+        
+        //return [cards[0][0].imageDescription(),cards[1][0].imageDescription(),cards[1][1].imageDescription()]
+    }
+    private func drawAndUnhideCard(c: Card, handIndex: Int) {
+        cards[handIndex][index[handIndex]] = c
+        view.cards?[handIndex][index[handIndex]].image = UIImage(named: c.imageDescription())
+        view.cards?[handIndex][index[handIndex]].isHidden = false
+        index[handIndex] += 1
     }
     private func countPoints() {
         points[0] = logic.countPoints(hand: cards[0])
         points[1] = logic.countPoints(hand: cards[1])
         points[2] = logic.countPoints(hand: cards[2])
+    }
+    private func setPointLabel(handIndex: Int) {
+        let label: UILabel
+        switch handIndex {
+        case 0:
+            label = view.lPointsBank
+        case 1:
+            label = view.lPoints1
+        case 2:
+            label = view.lPoints2
+        default:
+            label = view.lPointsBank
+        }
+        label.text = "\(points[handIndex])"
+        label.isHidden = false
     }
     func splitHand() {
         if cards[1][0].picture == .ace && cards[1][1].picture == .ace {

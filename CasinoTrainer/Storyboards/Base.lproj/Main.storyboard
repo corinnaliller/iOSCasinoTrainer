@@ -62,6 +62,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="UUX-KU-RsK"/>
+                    <connections>
+                        <segue destination="L4f-C1-tEN" kind="show" identifier="leaveCasino" id="frA-gR-WeM"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -76,7 +79,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="65" translatesAutoresizingMaskIntoConstraints="NO" id="hJd-Yf-ArB">
-                                <rect key="frame" x="37.5" y="164.5" width="300" height="338"/>
+                                <rect key="frame" x="37.5" y="214.5" width="300" height="338"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cY4-8P-S8K">
                                         <rect key="frame" x="36" y="0.0" width="228" height="30"/>
@@ -118,13 +121,13 @@
                                 </subviews>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome to Casino Trainer" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jcG-wP-4qg">
-                                <rect key="frame" x="16.5" y="113.5" width="342.5" height="36"/>
+                                <rect key="frame" x="16.5" y="163.5" width="342.5" height="36"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="feJ-WR-OLP">
-                                <rect key="frame" x="123" y="52" width="129" height="29"/>
+                                <rect key="frame" x="123" y="96" width="129" height="29"/>
                                 <segments>
                                     <segment title="Register"/>
                                     <segment title="Login"/>
@@ -140,7 +143,7 @@
                             <constraint firstItem="hJd-Yf-ArB" firstAttribute="top" secondItem="jcG-wP-4qg" secondAttribute="bottom" constant="15" id="2e0-Xz-jUw"/>
                             <constraint firstItem="feJ-WR-OLP" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="P4g-iD-wyt"/>
                             <constraint firstItem="hJd-Yf-ArB" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="c5e-AM-aoX"/>
-                            <constraint firstItem="hJd-Yf-ArB" firstAttribute="centerY" secondItem="4s4-uX-RGK" secondAttribute="centerY" id="rd8-mm-yg8"/>
+                            <constraint firstItem="hJd-Yf-ArB" firstAttribute="centerY" secondItem="4s4-uX-RGK" secondAttribute="centerY" constant="50" id="rd8-mm-yg8"/>
                             <constraint firstItem="jcG-wP-4qg" firstAttribute="centerX" secondItem="4s4-uX-RGK" secondAttribute="centerX" id="xar-LB-RoV"/>
                             <constraint firstItem="feJ-WR-OLP" firstAttribute="top" secondItem="gWO-2Z-dhy" secondAttribute="top" constant="32" id="yOr-8g-oj6"/>
                         </constraints>

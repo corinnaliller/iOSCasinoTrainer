@@ -83,7 +83,7 @@ extension SQLiteDatabase {
         guard sqlite3_step(insertStatement) == SQLITE_DONE else {
             throw SQLiteError.Step(message: errorMessage)
         }
-        print("Successfully inserted row")
+        print("Successfully inserted \(player)")
         let id = sqlite3_last_insert_rowid(insertStatement)
         
         return Int(id)
@@ -235,7 +235,7 @@ extension SQLiteDatabase {
         let playerName = String(cString: sqlite3_column_text(queryStatement, 1)) as NSString
         let playerCapital = sqlite3_column_double(queryStatement, 2)
         let playerBalance = sqlite3_column_double(queryStatement, 3)
-        //let wonDD = sqlite3_column_int(queryStatement, 0)
+        print("Retrieving \(playerName), ID: \(playerID), Capital: \(playerCapital), Balance: \(playerBalance)")
         return CasinoGuest(id: playerID, name: playerName, capital: playerCapital, balance: playerBalance)
     }
 //    func blackJackGame(id: Int32) -> BlackJackGame? {

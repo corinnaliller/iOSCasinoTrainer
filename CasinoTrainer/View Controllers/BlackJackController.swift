@@ -65,7 +65,7 @@ class BlackJackController: UIViewController {
         //print(guest?.balance)
         cards = [[iBank1,iBank2,iBank3,iBank4,iBank5,iBank6],[iSplit11,iSplit12,iSplit13,iSplit14,iSplit15,iSplit16],[iSplit21,iSplit22,iSplit23,iSplit24,iSplit25,iSplit26]]
         pointLabels = [lPointsBank,lPoints1,lPoints2]
-        setForNewGame()
+        //setForNewGame()
         
     }
     func setForNewGame() {
@@ -164,42 +164,44 @@ class BlackJackController: UIViewController {
         bPlay.setTitle("play", for: .normal)
     }
     func startNewGame() {
-        switchBustBet.isHidden = true
-        if bustBetMoney == 0.0 {
-            lBustBet.isHidden = true
-        }
-        let images = game!.startNewGame(newStakes: stakesMoney, newBustBet: bustBetMoney)
-        guest?.balance -= (stakesMoney+bustBetMoney)
-        cards?[0][0].image = UIImage(named: images[0])
-        cards?[0][0].isHidden = false
-        index[0] += 1
+        game!.startNewGame()
+        
+        //switchBustBet.isHidden = true
+//        if bustBetMoney == 0.0 {
+//            lBustBet.isHidden = true
+//        }
+        //let images = game!.startNewGame(newStakes: stakesMoney, newBustBet: bustBetMoney)
+        //guest?.balance -= (stakesMoney+bustBetMoney)
+        //cards?[0][0].image = UIImage(named: images[0])
+//        cards?[0][0].isHidden = false
+//        index[0] += 1
         //print(index[0])
-        cards?[1][index[1]].image = UIImage(named: images[1])
-        cards?[1][index[1]].isHidden = false
-        index[1] += 1
+//        cards?[1][index[1]].image = UIImage(named: images[1])
+//        cards?[1][index[1]].isHidden = false
+//        index[1] += 1
         //print(index[1])
-        cards?[1][index[1]].image = UIImage(named: images[2])
-        cards?[1][index[1]].isHidden = false
-        index[1] += 1
+//        cards?[1][index[1]].image = UIImage(named: images[2])
+//        cards?[1][index[1]].isHidden = false
+//        index[1] += 1
         //print(index[1])
-        lPointsBank.text = "\(game!.points[0])"
-        lPointsBank.isHidden = false
-        lPoints1.text = "\(game!.points[1])"
-        lPoints1.isHidden = false
-        if game!.handSplittable {
-            bSplit.isHidden = false
-        }
-        unhideButtonsForGame()
-        if game!.bankHasAce {
-            bPlay.setTitle("buy insurance", for: .normal)
-            slStakes.maximumValue = guest?.balance ?? 100.0-(bustBetMoney+stakesMoney)
-            slStakes.minimumValue = 0
-            slStakes.value = 0
-        }
-        else {
-            slStakes.isHidden = true
-            bPlay.isHidden = true
-        }
+//        lPointsBank.text = "\(game!.points[0])"
+//        lPointsBank.isHidden = false
+//        lPoints1.text = "\(game!.points[1])"
+//        lPoints1.isHidden = false
+//        if game!.handSplittable {
+//            bSplit.isHidden = false
+//        }
+//        unhideButtonsForGame()
+//        if game!.bankHasAce {
+//            bPlay.setTitle("buy insurance", for: .normal)
+//            slStakes.maximumValue = guest?.balance ?? 100.0-(bustBetMoney+stakesMoney)
+//            slStakes.minimumValue = 0
+//            slStakes.value = 0
+//        }
+//        else {
+//            slStakes.isHidden = true
+//            bPlay.isHidden = true
+//        }
         
     }
     func prepareForNewGame() {
