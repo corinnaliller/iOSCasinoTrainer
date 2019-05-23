@@ -100,6 +100,10 @@ class BlackJackLogicController {
         countPoints()
         setPointLabel(handIndex: 0)
         setPointLabel(handIndex: 1)
+        blackJack[1] = logic.checkBlackJack(hand: cards[1])
+        if blackJack[1] {
+            view.lPoints1.text! += "\(view.lPoints1.text!)!"
+        }
 //        cards[0][index[0]] = logic.drawCard()
 //        view.cards?[0][index[0]].image = UIImage(named: cards[0][index[0]].imageDescription())
 //        view.cards?[0][index[0]].isHidden = false
@@ -135,6 +139,11 @@ class BlackJackLogicController {
         view.cards?[handIndex][index[handIndex]].isHidden = false
         index[handIndex] += 1
     }
+    private func setBackOneCard(handIndex: Int) {
+        cards[handIndex][index[handIndex]] = Card()
+        view.cards?[handIndex][index[handIndex]].isHidden = true
+        index[handIndex] -= 1
+    }
     private func countPoints() {
         points[0] = logic.countPoints(hand: cards[0])
         points[1] = logic.countPoints(hand: cards[1])
@@ -155,21 +164,94 @@ class BlackJackLogicController {
         label.text = "\(points[handIndex])"
         label.isHidden = false
     }
+    private func setPointLabelText(handIndex: Int, text: String) {
+        let label: UILabel
+        switch handIndex {
+        case 0:
+            label = view.lPointsBank
+        case 1:
+            label = view.lPoints1
+        case 2:
+            label = view.lPoints2
+        default:
+            label = view.lPointsBank
+        }
+        label.text = text
+        label.isHidden = false
+    }
+    private func setStakesLabel(handIndex: Int) {
+        let label: UILabel
+        switch handIndex {
+        case 1:
+            label = view.lStakes
+        case 2:
+            label = view.lStakes2
+        default:
+            label = view.lStakes
+        }
+        label.text = "\(stakes[handIndex]) $"
+        label.isHidden = false
+    }
+    private func hideOrUnhideCardAndStandButtons(handIndex: Int, hidden: Bool) {
+        let card: UIButton
+        let stand: UIButton
+        switch handIndex {
+        case 1:
+            card = view.bCard1; stand = view.bStand1
+        case 2:
+            card = view.bCard2; stand = view.bStand2
+        default:
+            card = view.bCard1; stand = view.bStand1
+        }
+        card.isHidden = hidden
+        stand.isHidden = hidden
+    }
+    private func hideOrUnhideDoubleDownButton(handIndex: Int, hidden: Bool) {
+        let dDown: UIButton
+        switch handIndex {
+        case 1:
+            dDown = view.bDoubleDown1
+        case 2:
+            dDown = view.bDoubleDown2
+        default:
+            dDown = view.bDoubleDown1
+        }
+        dDown.isHidden = hidden
+    }
     func splitHand() {
+        view.bSplit.isHidden = true
         if cards[1][0].picture == .ace && cards[1][1].picture == .ace {
             twoAceSplit = true
         }
-        cards[2][0] = cards[1][1]
-        index[2] += 1
-        cards[1][1] = Card()
-        index[1] -= 1
+        drawAndUnhideCard(c: cards[1][1], handIndex: 2)
+        //cards[2][0] = cards[1][1]
+        //index[2] += 1
+        setBackOneCard(handIndex: 1)
+        //cards[1][1] = Card()
+        //index[1] -= 1
         stakes[2] = stakes[1]
         split = true
         countPoints()
+        setPointLabel(handIndex: 1)
+        setPointLabel(handIndex: 2)
+        if twoAceSplit {
+            
+        }
+        else {
+            view.unhideSplitButtons()
+        }
+        
     }
-    func doubleDown(i: Int) {
-        stakes[i] *= 2
-        doubleDown[i] = true
+    func performTwoAceSplit() {
+        
+    }
+    func doubleDown(handIndex: Int) {
+        player.balance -= stakes[handIndex]
+        try? db?.updateBalance(player: player)
+        stakes[handIndex] *= 2
+        doubleDown[handIndex] = true
+        setStakesLabel(handIndex: handIndex)
+        hideOrUnhideCardAndStandButtons(handIndex: handIndex, hidden: true)
     }
     func buyInsurance(money: Float) {
         insuranceMoney = money
@@ -191,19 +273,32 @@ class BlackJackLogicController {
         }
         return false
     }
-    func card(i: Int) -> String {
-        if !stand[i] {
-            cards[i][index[i]] = logic.drawCard()
+    func card(handIndex: Int) /*-> String */{
+        if !stand[handIndex] {
+            drawAndUnhideCard(c: logic.drawCard(), handIndex: handIndex)
+            //cards[handIndex][index[handIndex]] = logic.drawCard()
             countPoints()
+            setPointLabel(handIndex: handIndex)
+            hideOrUnhideDoubleDownButton(handIndex: handIndex, hidden: true)
             if !split {
                 blackJack[1] = logic.checkBlackJack(hand: cards[1])
             }
-            tripleSeven[i] = logic.checkTripleSeven(hand: cards[i])
-            bust[i] = logic.checkBust(cards: cards[i])
-            index[i] += 1
-            return cards[i][index[i]-1].imageDescription()
+            tripleSeven[handIndex] = logic.checkTripleSeven(hand: cards[handIndex])
+            bust[handIndex] = logic.checkBust(cards: cards[handIndex])
+            if bust[handIndex] || tripleSeven[handIndex] {
+                hideOrUnhideCardAndStandButtons(handIndex: handIndex, hidden: true)
+                if tripleSeven[handIndex] {
+                    setPointLabelText(handIndex: handIndex, text: "Triple-7")
+                }
+            }
+            if gameIsOver() {
+                // CONTINUE WRITING HERE!
+                // bankDraws()
+            }
+            //index[handIndex] += 1
+            //return cards[handIndex][index[handIndex]-1].imageDescription()
         }
-        return "empty"
+        //return "empty"
     }
     func stand(i: Int) {
         stand[i] = true

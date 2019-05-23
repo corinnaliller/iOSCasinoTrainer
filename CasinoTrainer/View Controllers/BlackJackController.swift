@@ -259,55 +259,56 @@ class BlackJackController: UIViewController {
     }
     func card(split: Int) {
         //print(game.points[split])
-        let newCard = game!.card(i: split)
+        /*let newCard = */
+        game!.card(handIndex: split)
         //print(game.points[split])
-        switch split {
-        case 1:
-            bDoubleDown1.isHidden = true
-        case 2:
-            bDoubleDown2.isHidden = true
-        default:
-            return
-        }
-        cards?[split][index[split]].image = UIImage(named: newCard)
-        cards?[split][index[split]].isHidden = false
-        index[split] += 1
-        pointLabels?[split].text = "\(game!.points[split])"
-        if game!.bust[split] {
-            switch split {
-            case 1:
-                bCard1.isHidden = true; bStand1.isHidden = true
-            case 2:
-                bCard2.isHidden = true; bCard2.isHidden = true
-            default:
-                return
-            }
-        }
-        if game!.tripleSeven[split] {
-            switch split {
-            case 1:
-                bCard1.isHidden = true; bStand1.isHidden = true;bDoubleDown1.isHidden = true
-            case 2:
-                bCard2.isHidden = true; bCard2.isHidden = true;bDoubleDown2.isHidden = true
-            default:
-                return
-            }
-        }
-        if game!.gameIsOver() {
-            bankDraws()
-        }
+//        switch split {
+//        case 1:
+//            bDoubleDown1.isHidden = true
+//        case 2:
+//            bDoubleDown2.isHidden = true
+//        default:
+//            return
+//        }
+        //cards?[split][index[split]].image = UIImage(named: newCard)
+        //cards?[split][index[split]].isHidden = false
+        //index[split] += 1
+        //pointLabels?[split].text = "\(game!.points[split])"
+//        if game!.bust[split] {
+//            switch split {
+//            case 1:
+//                bCard1.isHidden = true; bStand1.isHidden = true
+//            case 2:
+//                bCard2.isHidden = true; bCard2.isHidden = true
+//            default:
+//                return
+//            }
+//        }
+//        if game!.tripleSeven[split] {
+//            switch split {
+//            case 1:
+//                bCard1.isHidden = true; bStand1.isHidden = true;bDoubleDown1.isHidden = true
+//            case 2:
+//                bCard2.isHidden = true; bCard2.isHidden = true;bDoubleDown2.isHidden = true
+//            default:
+//                return
+//            }
+//        }
+//        if game!.gameIsOver() {
+//            bankDraws()
+//        }
     }
     func doubleDown(split: Int) {
-        guest?.balance -= game!.stakes[split]
-        game!.doubleDown(i: split)
-        switch split {
-        case 1:
-            lStakes.text = "\(MathHelper.roundFloat(number: game!.stakes[1])) $";bStand1.isHidden = true;bCard1.isHidden = true
-        case 2:
-            lStakes2.text = "\(MathHelper.roundFloat(number: game!.stakes[2])) $";bStand2.isHidden = true;bCard2.isHidden = true
-        default:
-            return
-        }
+        //guest?.balance -= game!.stakes[split]
+        game!.doubleDown(handIndex: split)
+//        switch split {
+//        case 1:
+//            lStakes.text = "\(MathHelper.roundFloat(number: game!.stakes[1])) $";bStand1.isHidden = true;bCard1.isHidden = true
+//        case 2:
+//            lStakes2.text = "\(MathHelper.roundFloat(number: game!.stakes[2])) $";bStand2.isHidden = true;bCard2.isHidden = true
+//        default:
+//            return
+//        }
         card(split: split)
         game!.stand[split] = true
         if !game!.split {
@@ -347,18 +348,18 @@ class BlackJackController: UIViewController {
     }
     @IBAction func splitHand(_ sender: UIButton) {
         game!.splitHand()
-        bSplit.isHidden = true
+        //bSplit.isHidden = true
         
-        cards?[2][index[2]].image = UIImage(named: game!.cards[2][index[2]].imageDescription())
-        cards?[2][index[2]].isHidden = false
-        index[2] += 1
-        cards?[1][1].isHidden = true
-        index[1] -= 1
-        pointLabels?[1].text = "\(game!.points[1])"
-        pointLabels?[2].text = "\(game!.points[2])"
-        lStakes2.text = "\(game!.stakes[2]) $"
-        lStakes2.isHidden = false
-        pointLabels?[2].isHidden = false
+        //cards?[2][index[2]].image = UIImage(named: game!.cards[2][index[2]].imageDescription())
+        //cards?[2][index[2]].isHidden = false
+        //index[2] += 1
+        //cards?[1][1].isHidden = true
+        //index[1] -= 1
+        //pointLabels?[1].text = "\(game!.points[1])"
+        //pointLabels?[2].text = "\(game!.points[2])"
+        //lStakes2.text = "\(game!.stakes[2]) $"
+        //lStakes2.isHidden = false
+        //pointLabels?[2].isHidden = false
         if game!.twoAceSplit {
             self.card(split: 1)
             self.card(split: 2)
