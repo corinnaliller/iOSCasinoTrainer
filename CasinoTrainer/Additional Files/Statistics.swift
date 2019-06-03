@@ -47,6 +47,14 @@ class Player : Codable {
 //        case bjStats = "BlackjackStats"
 //        case rouStats = "RouletteStats"
     }
+    func description() -> String {
+        return """
+        ID: \(id)
+        name: \(playerName)
+        initial capital: \(initialCapital)
+        balance: \(balance)
+        """
+    }
     
 //    func endBlackJack(outcome: BlackJackGameOver) {
 //        switch outcome.winOrLose {

@@ -34,14 +34,17 @@ class CasinoFoyerController: UIViewController {
     }
     @IBAction func goToRoulette(_ sender: UIButton) {
         let rouletteVC: RouletteController = UIStoryboard(name: "Roulette", bundle: nil).instantiateInitialViewController() as! RouletteController
+        rouletteVC.guest = self.guest
         self.navigationController?.pushViewController(rouletteVC, animated: true)
     }
     @IBAction func goToBlackJack(_ sender: UIButton) {
         let blackJackVC: BlackJackController = UIStoryboard(name: "Blackjack", bundle: nil).instantiateInitialViewController() as! BlackJackController
+        blackJackVC.guest = self.guest
         self.navigationController?.pushViewController(blackJackVC, animated: true)
     }
     @IBAction func goToStatistics(_ sender: UIButton) {
         let statVC: StatisticsChoiceController = UIStoryboard(name: "Statistics", bundle: nil).instantiateInitialViewController() as! StatisticsChoiceController
+        statVC.guest = self.guest
         self.navigationController?.pushViewController(statVC, animated: true)
     }
     override func viewWillAppear(_ animated: Bool) {

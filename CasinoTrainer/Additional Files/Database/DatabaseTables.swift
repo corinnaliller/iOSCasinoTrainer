@@ -28,6 +28,15 @@ struct CasinoGuest {
         self.capital = capital
         self.balance = balance
     }
+    func description() -> String {
+        return """
+        Casino Guest:
+            id: \(id)
+            name: \(name)
+            capital: \(capital)
+            balance: \(balance)
+        """
+    }
 }
 extension CasinoGuest : SQLTable {
     static var createStatement: String {

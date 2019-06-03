@@ -11,7 +11,7 @@ import SQLite3
 
 /// BODY
 class SQLiteDatabase {
-    fileprivate let dbPointer: OpaquePointer?
+    let dbPointer: OpaquePointer?
     
     init(dbPointer: OpaquePointer?) {
         self.dbPointer = dbPointer
@@ -48,6 +48,9 @@ class SQLiteDatabase {
         else {
             throw SQLiteError.OpenDatabase(message: "No Error Message provided")
         }
+    }
+    func close() {
+        sqlite3_close(dbPointer)
     }
 }
 

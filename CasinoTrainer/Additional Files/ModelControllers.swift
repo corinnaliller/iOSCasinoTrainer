@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class BlackJackLogicController {
-    let db: SQLiteDatabase?
+    var db: SQLiteDatabase? = nil
     let player: Player
     let view: BlackJackController
     let logic: BlackJackLogic
@@ -34,10 +34,16 @@ class BlackJackLogicController {
     var tookInsurance: Bool
     
     init(player: Player, view: BlackJackController) {
-        db = try! SQLiteDatabase.open(path: Database.CasinoTrainer.rawValue)
-        if db == nil {
-            print("Could not open database.")
+        do {
+            db = try SQLiteDatabase.open(path: Database.CasinoTrainer.rawValue)
+            if db == nil {
+                print("Could not open database.")
+            }
         }
+        catch {
+            print(error.localizedDescription)
+        }
+        
         self.player = player
         self.view = view
         logic = BlackJackLogic()
@@ -235,7 +241,7 @@ class BlackJackLogicController {
         setPointLabel(handIndex: 1)
         setPointLabel(handIndex: 2)
         if twoAceSplit {
-            
+            self.performTwoAceSplit()
         }
         else {
             view.unhideSplitButtons()
@@ -243,7 +249,10 @@ class BlackJackLogicController {
         
     }
     func performTwoAceSplit() {
-        
+        self.card(handIndex: 1)
+        self.stand(handIndex: 1)
+        self.card(handIndex: 2)
+        self.stand(handIndex: 2)
     }
     func doubleDown(handIndex: Int) {
         player.balance -= stakes[handIndex]
@@ -252,6 +261,12 @@ class BlackJackLogicController {
         doubleDown[handIndex] = true
         setStakesLabel(handIndex: handIndex)
         hideOrUnhideCardAndStandButtons(handIndex: handIndex, hidden: true)
+        self.card(handIndex: handIndex)
+        self.stand(handIndex: handIndex)
+        if split || gameIsOver() {
+            self.bankDraws()
+            self.endGame()
+        }
     }
     func buyInsurance(money: Float) {
         insuranceMoney = money
@@ -271,7 +286,9 @@ class BlackJackLogicController {
                 return true
             }
         }
-        return false
+        else {
+            return false
+        }
     }
     func card(handIndex: Int) /*-> String */{
         if !stand[handIndex] {
@@ -292,34 +309,63 @@ class BlackJackLogicController {
                 }
             }
             if gameIsOver() {
-                // CONTINUE WRITING HERE!
-                // bankDraws()
+                self.bankDraws()
+                self.endGame()
             }
             //index[handIndex] += 1
             //return cards[handIndex][index[handIndex]-1].imageDescription()
         }
         //return "empty"
     }
-    func stand(i: Int) {
-        stand[i] = true
-    }
-    func bankDraws() -> [String] {
-        var images = Array<String>()
-        while points[0] < 17 {
-            cards[0][index[0]] = logic.drawCard()
-            images.append(cards[0][index[0]].imageDescription())
-            points[0] = logic.countPoints(hand: cards[0])
-            index[0] += 1
+    func stand(handIndex: Int) {
+        stand[handIndex] = true
+        hideOrUnhideCardAndStandButtons(handIndex: handIndex, hidden: true)
+        hideOrUnhideDoubleDownButton(handIndex: handIndex, hidden: true)
+        if gameIsOver(){
+            self.bankDraws()
+            self.endGame()
+
         }
-        return images
     }
-    func gameOver(i: Int) -> BlackJackGameOver {
+    private func endGame() {
+        let result1 = self.gameOver(handIndex: 1)
+        player.balance += result1.prizeMoney+result1.bustBetPayout+result1.insurancePayout
+        do {
+            try db?.updateBalance(player: player)
+        }
+        catch {
+            print(error.localizedDescription)
+        }
+        if split {
+            let result2 = self.gameOver(handIndex: 2)
+            player.balance += result2.prizeMoney+result2.bustBetPayout+result2.insurancePayout
+            do {
+                try db?.updateBalance(player: player)
+            }
+            catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    func bankDraws() /*-> [String] */ {
+        //var images = Array<String>()
+        while points[0] < 17 {
+            drawAndUnhideCard(c: logic.drawCard(), handIndex: 0)
+            //cards[0][index[0]] = logic.drawCard()
+            //images.append(cards[0][index[0]].imageDescription())
+            points[0] = logic.countPoints(hand: cards[0])
+            //index[0] += 1
+        }
+        
+        //return images
+    }
+    func gameOver(handIndex: Int) -> BlackJackGameOver {
         let result: BlackJackGameOver
-        if i == 1 {
-            result = logic.gameOver(playerCards: cards[i], bankCards: cards[0], stakes: stakes[i], tookInsurance: tookInsurance, insurance: insuranceMoney, betOnBust: betOnBust, bustBet: bustBetMoney, doubleDown: doubleDown[i], split: split)
+        if handIndex == 1 {
+            result = logic.gameOver(playerCards: cards[handIndex], bankCards: cards[0], stakes: stakes[handIndex], tookInsurance: tookInsurance, insurance: insuranceMoney, betOnBust: betOnBust, bustBet: bustBetMoney, doubleDown: doubleDown[handIndex], split: split)
         }
         else {
-            result = logic.gameOver(playerCards: cards[i], bankCards: cards[0], stakes: stakes[i], tookInsurance: tookInsurance, insurance: insuranceMoney, betOnBust: betOnBust, bustBet: 0, doubleDown: doubleDown[i], split: false)
+            result = logic.gameOver(playerCards: cards[handIndex], bankCards: cards[0], stakes: stakes[handIndex], tookInsurance: tookInsurance, insurance: insuranceMoney, betOnBust: betOnBust, bustBet: 0, doubleDown: doubleDown[handIndex], split: false)
         }
         try? db?.insertBlackJackGameRow(result, player: player)
         return result
