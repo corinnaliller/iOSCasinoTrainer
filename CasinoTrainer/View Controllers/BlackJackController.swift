@@ -48,6 +48,8 @@ class BlackJackController: UIViewController {
     @IBOutlet weak var lBalance: UILabel!
     @IBOutlet weak var switchBustBet: UISwitch!
     
+    var dbPointer: OpaquePointer?
+    
     var cards: [[UIImageView]]?
     var pointLabels: [UILabel]?
     var guest: Player?
@@ -59,7 +61,7 @@ class BlackJackController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        game = BlackJackLogicController(player: guest!, view: self)
+        game = BlackJackLogicController(player: guest!, view: self, dbPointer: dbPointer)
         // Do any additional setup after loading the view.
         //print(guest?.playerName)
         //print(guest?.balance)
@@ -83,9 +85,9 @@ class BlackJackController: UIViewController {
     }
     func hideLabelsAtStart() {
         lStakes2.isHidden = true
-        for label in pointLabels! {
-            label.isHidden = true
-        }
+//        for label in pointLabels! {
+//            label.isHidden = true
+//        }
         lBustBet.isHidden = false
         lInsurance.isHidden = true
     }

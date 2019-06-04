@@ -14,26 +14,27 @@ class CasinoEntranceController: UIViewController {
     @IBOutlet weak var lMoney: UILabel!
     @IBOutlet weak var bEnter: UIButton!
     @IBOutlet weak var segCtrlLogin: UISegmentedControl!
-    var db: SQLiteDatabase = SQLiteDatabase(dbPointer: nil)
+//    var db: SQLiteDatabase = SQLiteDatabase(dbPointer: nil)
+    var dbController: DatabaseController = DatabaseController()
     var logout: Bool = false
     var guest: Player?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        do {
-            try db = SQLiteDatabase.open(path: Database.CasinoTrainer.path)
-            try db.createTable(table: CasinoGuest.self)
-            try db.createTable(table: BlackJackGame.self)
-            try db.createTable(table: BlackJackBustBet.self)
-            try db.createTable(table: BlackJackInsurance.self)
-            try db.createTable(table: RouletteGame.self)
-        }
-        catch {
-            if error is SQLiteError {
-                let e = error as! SQLiteError
-                print(e.localizedDescription)
-            }
-        }
+//        do {
+//            try db = SQLiteDatabase.open(path: Database.CasinoTrainer.path)
+//            try db.createTable(table: CasinoGuest.self)
+//            try db.createTable(table: BlackJackGame.self)
+//            try db.createTable(table: BlackJackBustBet.self)
+//            try db.createTable(table: BlackJackInsurance.self)
+//            try db.createTable(table: RouletteGame.self)
+//        }
+//        catch {
+//            if error is SQLiteError {
+//                let e = error as! SQLiteError
+//                print(e.localizedDescription)
+//            }
+//        }
         do {
             guest = try DataSaver.retrieveGuest()
         }
@@ -72,34 +73,25 @@ class CasinoEntranceController: UIViewController {
     @IBAction func enterCasino(_ sender: Any) {
         if tUserName.text != "" {
             if segCtrlLogin.selectedSegmentIndex == 1 {
-                do {
-                    let casinoGuest = try db.getPlayer(name: tUserName.text!)
-                    print(casinoGuest?.description() ?? "Nobody")
-                    if casinoGuest != nil {
-                        self.guest = Player(guest: casinoGuest!)
-                        performSegue(withIdentifier: "enterCasino", sender: self)
-                    }
-                    else {
-                        print("You have not been here before!")
-                    }
+                let casinoGuest = dbController.getPlayer(name: tUserName.text!)
+                print(casinoGuest?.description() ?? "Nobody")
+                if casinoGuest != nil {
+                    self.guest = Player(guest: casinoGuest!)
+                    performSegue(withIdentifier: "enterCasino",sender: self)
                 }
-                catch {
-                    print("Did not find guest in database")
+                else {
+                    print("You have not been here before!")
                 }
+
             }
             else {
-                do {
-                    let newId = try db.insertPlayer(tUserName.text!, capital: MathHelper.roundFloat(number: slCapital.value))
-                    print(newId)
-                    self.guest = Player(id: newId, name: tUserName.text!, capital: slCapital.value)
+                let newId = dbController.insertPlayer(tUserName.text!, capital: MathHelper.roundFloat(number: slCapital.value))
+                print(newId ?? "Nothing")
+                if newId != nil {
+                    self.guest = Player(id: newId!, name: tUserName.text!, capital: slCapital.value)
                     performSegue(withIdentifier: "enterCasino", sender: self)
-                    
                 }
-                catch {
-                    print(db.errorMessage)
-                    print(error.localizedDescription)
-                }
-                
+
             }
         }
     }
@@ -109,7 +101,6 @@ class CasinoEntranceController: UIViewController {
         print("Navigation to foyer")
         let foyer: CasinoFoyerController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CasinoFoyer") as! CasinoFoyerController
         foyer.guest = self.guest
-        self.db.close()
         try? DataSaver.saveGuest(guest: guest!)
         self.navigationController?.pushViewController(foyer, animated: true)
     }
@@ -121,6 +112,8 @@ class CasinoEntranceController: UIViewController {
         if let navi = segue.destination as? CasinoNavigator {
             let foyer = navi.viewControllers.first as! CasinoFoyerController
             foyer.guest = self.guest
+            try? DataSaver.saveGuest(guest: guest!)
+            foyer.dbPointer = dbController.getPointer()
         }
 
     }

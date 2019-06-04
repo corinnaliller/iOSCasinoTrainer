@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class BlackJackLogicController {
-    var db: SQLiteDatabase? = nil
+    var dbController: DatabaseController
     let player: Player
     let view: BlackJackController
     let logic: BlackJackLogic
@@ -33,17 +33,8 @@ class BlackJackLogicController {
     var betOnBust: Bool
     var tookInsurance: Bool
     
-    init(player: Player, view: BlackJackController) {
-        do {
-            db = try SQLiteDatabase.open(path: Database.CasinoTrainer.rawValue)
-            if db == nil {
-                print("Could not open database.")
-            }
-        }
-        catch {
-            print(error.localizedDescription)
-        }
-        
+    init(player: Player, view: BlackJackController, dbPointer: OpaquePointer?) {
+        self.dbController = DatabaseController(pointer: dbPointer)
         self.player = player
         self.view = view
         logic = BlackJackLogic()
@@ -95,7 +86,7 @@ class BlackJackLogicController {
         stakes[1] = view.stakesMoney
         bustBetMoney = view.bustBetMoney
         player.balance -= (stakes[1]+bustBetMoney)
-        try? db?.updateBalance(player: player)
+        dbController.updateBalance(player: player)
         if (bustBetMoney > 0) {
             betOnBust = true
             view.lBustBet.isHidden = true
@@ -256,7 +247,7 @@ class BlackJackLogicController {
     }
     func doubleDown(handIndex: Int) {
         player.balance -= stakes[handIndex]
-        try? db?.updateBalance(player: player)
+        dbController.updateBalance(player: player)
         stakes[handIndex] *= 2
         doubleDown[handIndex] = true
         setStakesLabel(handIndex: handIndex)
@@ -330,21 +321,11 @@ class BlackJackLogicController {
     private func endGame() {
         let result1 = self.gameOver(handIndex: 1)
         player.balance += result1.prizeMoney+result1.bustBetPayout+result1.insurancePayout
-        do {
-            try db?.updateBalance(player: player)
-        }
-        catch {
-            print(error.localizedDescription)
-        }
+        dbController.updateBalance(player: player)
         if split {
             let result2 = self.gameOver(handIndex: 2)
             player.balance += result2.prizeMoney+result2.bustBetPayout+result2.insurancePayout
-            do {
-                try db?.updateBalance(player: player)
-            }
-            catch {
-                print(error.localizedDescription)
-            }
+            dbController.updateBalance(player: player)
         }
     }
     func bankDraws() /*-> [String] */ {
@@ -367,7 +348,7 @@ class BlackJackLogicController {
         else {
             result = logic.gameOver(playerCards: cards[handIndex], bankCards: cards[0], stakes: stakes[handIndex], tookInsurance: tookInsurance, insurance: insuranceMoney, betOnBust: betOnBust, bustBet: 0, doubleDown: doubleDown[handIndex], split: false)
         }
-        try? db?.insertBlackJackGameRow(result, player: player)
+        dbController.insertBlackJackGameRow(result, player: player)
         return result
     }
 }
