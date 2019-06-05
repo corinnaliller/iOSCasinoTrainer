@@ -56,7 +56,7 @@ class BlackJackLogicController {
         twoAceSplit = false
         tookInsurance = false
         betOnBust = false
-        view.setForNewGame()
+        setForNewGame()
     }
     private func reset() {
         logic.checkDecks()
@@ -78,7 +78,7 @@ class BlackJackLogicController {
         twoAceSplit = false
         tookInsurance = false
         betOnBust = false
-        view.setForNewGame()
+        setForNewGame()
     }
     func startNewGame() {
         reset()
@@ -129,6 +129,18 @@ class BlackJackLogicController {
         }
         
         //return [cards[0][0].imageDescription(),cards[1][0].imageDescription(),cards[1][1].imageDescription()]
+    }
+    func prepareForNewGame() {
+        setForNewGame()
+        view.bPlay.setTitle("play", for: .normal)
+        resetSlider()
+        resetBustSwitch()
+    }
+    
+    private func setForNewGame() {
+        hideAllCards()
+        hideButtons()
+        hideLabelsAtStart()
     }
     private func drawAndUnhideCard(c: Card, handIndex: Int) {
         cards[handIndex][index[handIndex]] = c
@@ -327,6 +339,9 @@ class BlackJackLogicController {
             player.balance += result2.prizeMoney+result2.bustBetPayout+result2.insurancePayout
             dbController.updateBalance(player: player)
         }
+        view.bPlay.setTitle("new game", for: .normal)
+        view.bPlay.isHidden = false
+        hideButtons()
     }
     func bankDraws() /*-> [String] */ {
         //var images = Array<String>()
@@ -337,7 +352,6 @@ class BlackJackLogicController {
             points[0] = logic.countPoints(hand: cards[0])
             //index[0] += 1
         }
-        
         //return images
     }
     func gameOver(handIndex: Int) -> BlackJackGameOver {
@@ -350,6 +364,42 @@ class BlackJackLogicController {
         }
         dbController.insertBlackJackGameRow(result, player: player)
         return result
+    }
+    private func hideAllCards() {
+        for arrays in view.cards! {
+            for image in arrays {
+                image.isHidden = true
+            }
+        }
+    }
+    private func hideButtons() {
+        view.bSplit.isHidden = true
+        view.bCard1.isHidden = true
+        view.bCard2.isHidden = true
+        view.bStand1.isHidden = true
+        view.bStand2.isHidden = true
+        view.bDoubleDown1.isHidden = true
+        view.bDoubleDown2.isHidden = true
+    }
+    private func hideLabelsAtStart() {
+        view.lStakes2.isHidden = true
+        view.lPoints1.isHidden = true
+        view.lPoints2.isHidden = true
+        view.lPointsBank.isHidden = true
+        view.lBustBet.isHidden = true
+        view.lInsurance.isHidden = true
+    }
+    private func resetSlider() {
+        view.slStakes.minimumValue = 1
+        view.slStakes.maximumValue = player.balance
+        view.slStakes.value = 1
+        view.slStakes.isHidden = false
+        view.lStakes.text = "\(MathHelper.roundFloat(number: view.slStakes.value)) $"
+        view.lBalance.text = "\(MathHelper.roundFloat(number: player.balance)) $"
+    }
+    private func resetBustSwitch() {
+        view.switchBustBet.isOn = false
+        view.switchBustBet.isHidden = false
     }
 }
 class RouletteLogicController {
