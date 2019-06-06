@@ -17,18 +17,18 @@ class StatisticsChoiceController: UIViewController {
         // Do any additional setup after loading the view.
     }
     @IBAction func goToTable(_ sender: UIButton) {
-        let bjgames = guest!.bjStats.outcomes[BlackJackOutcomes.gamesTied]!+guest!.bjStats.gamesLost+guest!.bjStats.gamesWon
-        let rougames = guest!.rouStats.gamesWon+guest!.rouStats.gamesLost
-        switch sender.tag {
-        case 1:
-            if bjgames != 0 {performSegue(withIdentifier: "showBlackJackStatistics", sender: self)}
-        case 2:
-            if rougames != 0 {performSegue(withIdentifier: "showRouletteStatistics", sender: self)}
-        case 3:
-            if (bjgames+rougames) != 0 {performSegue(withIdentifier: "showMetaStatistics", sender: self)}
-        default:
-            return
-        }
+        //let bjgames = guest!.bjStats.outcomes[BlackJackOutcomes.gamesTied]!+guest!.bjStats.gamesLost+guest!.bjStats.gamesWon
+//        let rougames = guest!.rouStats.gamesWon+guest!.rouStats.gamesLost
+//        switch sender.tag {
+//        case 1:
+//            if bjgames != 0 {performSegue(withIdentifier: "showBlackJackStatistics", sender: self)}
+//        case 2:
+//            if rougames != 0 {performSegue(withIdentifier: "showRouletteStatistics", sender: self)}
+//        case 3:
+//            if (bjgames+rougames) != 0 {performSegue(withIdentifier: "showMetaStatistics", sender: self)}
+//        default:
+//            return
+//        }
     }
     
 

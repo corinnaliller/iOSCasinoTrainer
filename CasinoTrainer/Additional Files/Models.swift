@@ -244,7 +244,7 @@ class BlackJackLogic {
                 }
             }
         }
-        return BlackJackGameOver(outcome: outcome, prize: prize, stakes: stakes, insurance: insuranceMoney, bust: bustBetMoney, dd: doubleDown, bj: bJ, ts: ts, bbj: bankBJ, bwb: bankBust, ti: tookInsurance, bob: betOnBust, wb: bust)
+        return BlackJackGameOver(outcome: outcome, prize: prize, stakes: stakes, insurance: insurance, insurancePayout: insuranceMoney, bustBetStakes: bustBet, bustBetPayout: bustBetMoney, dd: doubleDown, bj: bJ, ts: ts, bbj: bankBJ, bwb: bankBust, ti: tookInsurance, bob: betOnBust, wb: bust, points: playerPoints, bankPoints: bankPoints)
     }
 }
 
@@ -252,6 +252,8 @@ struct BlackJackGameOver {
     var winOrLose: Status
     var prizeMoney: Float
     var stakesMoney: Float
+    var bustBetStakes: Float
+    var insurance: Float
     var insurancePayout: Float
     var bustBetPayout: Float
     var doubledDown: Bool
@@ -262,21 +264,27 @@ struct BlackJackGameOver {
     var tookInsurance: Bool
     var betOnBust: Bool
     var wentBust: Bool
+    var points: Int
+    var bankPoints: Int
     
-    init(outcome: Int, prize: Float, stakes: Float, insurance: Float, bust: Float, dd: Bool, bj: Bool, ts: Bool, bbj: Bool, bwb: Bool, ti: Bool, bob: Bool, wb: Bool) {
-        winOrLose = Status.init(rawValue: outcome)!
-        prizeMoney = prize
-        stakesMoney = stakes
-        insurancePayout = insurance
-        bustBetPayout = bust
-        doubledDown = dd
-        hadBlackJack = bj
-        hadTripleSeven = ts
-        bankHadBlackJack = bbj
-        bankWentBust = bwb
-        tookInsurance = ti
-        betOnBust = bob
-        wentBust = wb
+    init(outcome: Int, prize: Float, stakes: Float, insurance: Float, insurancePayout: Float, bustBetStakes: Float, bustBetPayout: Float, dd: Bool, bj: Bool, ts: Bool, bbj: Bool, bwb: Bool, ti: Bool, bob: Bool, wb: Bool, points: Int, bankPoints: Int) {
+        self.winOrLose = Status.init(rawValue: outcome)!
+        self.prizeMoney = prize
+        self.stakesMoney = stakes
+        self.insurancePayout = insurancePayout
+        self.insurance = insurance
+        self.bustBetPayout = bustBetPayout
+        self.bustBetStakes = bustBetStakes
+        self.doubledDown = dd
+        self.hadBlackJack = bj
+        self.hadTripleSeven = ts
+        self.bankHadBlackJack = bbj
+        self.bankWentBust = bwb
+        self.tookInsurance = ti
+        self.betOnBust = bob
+        self.wentBust = wb
+        self.points = points
+        self.bankPoints = bankPoints
     }
     func description() -> String {
         let answer = """

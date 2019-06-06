@@ -20,7 +20,7 @@ class BlackJackStatisticsController: UIViewController {
 //        print(guest?.bjStats.gamesLost)
         // Do any additional setup after loading the view.
         if guest != nil {
-            dataSource = DataAnalysis(bjstat: guest!.bjStats)
+            //dataSource = DataAnalysis(bjstat: guest!.bjStats)
         }
         statisticsTable.estimatedRowHeight = 113
         statisticsTable.rowHeight = UITableView.automaticDimension

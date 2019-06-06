@@ -12,23 +12,23 @@ class MetaStatisticsController: UIViewController {
 
     var guest: Player?
     @IBOutlet weak var metaTableView: UITableView!
-    var dataSource: MetaDataAnalysis
+    //var dataSource: MetaDataAnalysis
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if guest != nil {
-            dataSource = MetaDataAnalysis(guest: guest!)
+            //dataSource = MetaDataAnalysis(guest: guest!)
         }
         metaTableView.estimatedRowHeight = 113
         metaTableView.rowHeight = UITableView.automaticDimension
-        metaTableView.dataSource = dataSource
+        //metaTableView.dataSource = dataSource
         metaTableView.reloadData()
 
         // Do any additional setup after loading the view.
     }
     required init?(coder aDecoder: NSCoder) {
         
-        self.dataSource = MetaDataAnalysis(guest: Player())
+        //self.dataSource = MetaDataAnalysis(guest: Player())
         super.init(coder: aDecoder)
     }
 

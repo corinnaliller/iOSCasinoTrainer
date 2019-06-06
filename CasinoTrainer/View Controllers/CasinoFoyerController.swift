@@ -10,11 +10,14 @@ import UIKit
 
 class CasinoFoyerController: UIViewController {
 
+    var logoutBtn: UIBarButtonItem?
+    var dbPointer: OpaquePointer?
     var guest: Player?
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        logoutBtn = UIBarButtonItem(title: "logout", style: .done, target: self, action: #selector(logout))
+        navigationItem.leftBarButtonItem = logoutBtn!
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.destination is BlackJackController {
@@ -32,14 +35,20 @@ class CasinoFoyerController: UIViewController {
     }
     @IBAction func goToRoulette(_ sender: UIButton) {
         let rouletteVC: RouletteController = UIStoryboard(name: "Roulette", bundle: nil).instantiateInitialViewController() as! RouletteController
+        rouletteVC.guest = self.guest
+        //rouletteVC.dbPointer = self.dbPointer
         self.navigationController?.pushViewController(rouletteVC, animated: true)
     }
     @IBAction func goToBlackJack(_ sender: UIButton) {
         let blackJackVC: BlackJackController = UIStoryboard(name: "Blackjack", bundle: nil).instantiateInitialViewController() as! BlackJackController
+        blackJackVC.guest = self.guest
+        blackJackVC.dbPointer = self.dbPointer
         self.navigationController?.pushViewController(blackJackVC, animated: true)
     }
     @IBAction func goToStatistics(_ sender: UIButton) {
         let statVC: StatisticsChoiceController = UIStoryboard(name: "Statistics", bundle: nil).instantiateInitialViewController() as! StatisticsChoiceController
+        statVC.guest = self.guest
+        //statVC.dbPointer = self.dbPointer
         self.navigationController?.pushViewController(statVC, animated: true)
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -56,6 +65,9 @@ class CasinoFoyerController: UIViewController {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         try? DataSaver.saveGuest(guest: guest!)
+    }
+    @objc private func logout() {
+        performSegue(withIdentifier: "leaveCasino", sender: self)
     }
 }
 

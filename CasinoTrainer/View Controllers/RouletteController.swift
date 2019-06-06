@@ -21,11 +21,14 @@ class RouletteController: UIViewController {
     let minimum = 10
     var bet: RouletteBet?
     var guest: Player?
-    let roulette = RouletteLogicController()
+    var roulette: RouletteLogicController?
     override func viewDidLoad() {
         super.viewDidLoad()
         //print(guest?.playerName)
         
+        if guest != nil {
+            roulette = RouletteLogicController(player: guest!, view: self)
+        }
         lResult.isHidden = true
         lWin.isHidden = true
         
@@ -95,7 +98,7 @@ class RouletteController: UIViewController {
             sender.setTitle("Play again", for: .normal)
             guest!.balance -= slStakes.value
             lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance)) $"
-            let result = roulette.rienNeVasPlus(bet: bet!, stakes: MathHelper.roundFloat(number: slStakes.value))
+            let result = roulette!.rienNeVasPlus(bet: bet!, stakes: MathHelper.roundFloat(number: slStakes.value))
             print(result.description())
             if result.winningNumber.color == RouletteColor.black {
                 lResult.textColor = UIColor.black
@@ -108,7 +111,7 @@ class RouletteController: UIViewController {
             }
             lResult.text = "\(result.winningNumber.number)"
             lResult.isHidden = false
-            guest!.endRoulette(outcome: result)
+            //guest!.endRoulette(outcome: result)
             if result.outcome {
                 lWin.text = "\(result.prize) $"
             }
