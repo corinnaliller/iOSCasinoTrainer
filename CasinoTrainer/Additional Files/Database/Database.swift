@@ -241,6 +241,28 @@ extension SQLiteDatabase {
         print("Retrieving \(playerName), ID: \(playerID), Capital: \(playerCapital), Balance: \(playerBalance)")
         return CasinoGuest(id: playerID, name: playerName, capital: playerCapital, balance: playerBalance)
     }
+    func getAllPlayerNames() throws -> [String]? {
+        let querySql = "SELECT Name FROM \(TableNames.Guest.rawValue);"
+        var playerNames = [String]()
+        guard let queryStatement = try? prepareStatement(sql: querySql) else {
+            return nil
+        }
+        defer {
+            sqlite3_finalize(queryStatement)
+        }
+        while (sqlite3_step(queryStatement) == SQLITE_ROW)  {
+            playerNames.append(String(cString:sqlite3_column_text(queryStatement, 0)))
+        }
+//        guard sqlite3_step(queryStatement) == SQLITE_ROW else {
+//            return nil
+//        }
+        let playerID = sqlite3_column_int(queryStatement, 0)
+        let playerName = String(cString: sqlite3_column_text(queryStatement, 1)) as NSString
+        let playerCapital = sqlite3_column_double(queryStatement, 2)
+        let playerBalance = sqlite3_column_double(queryStatement, 3)
+        print("Retrieving \(playerName), ID: \(playerID), Capital: \(playerCapital), Balance: \(playerBalance)")
+        return playerNames
+    }
 //    func blackJackGame(id: Int32) -> BlackJackGame? {
 //        let querySql = "SELECT * FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ?;"
 //        guard let queryStatement = try? prepareStatement(sql: querySql) else {

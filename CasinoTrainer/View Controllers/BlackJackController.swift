@@ -61,14 +61,14 @@ class BlackJackController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        game = BlackJackLogicController(player: guest!, view: self, dbPointer: dbPointer)
+        
         // Do any additional setup after loading the view.
         //print(guest?.playerName)
         //print(guest?.balance)
         cards = [[iBank1,iBank2,iBank3,iBank4,iBank5,iBank6],[iSplit11,iSplit12,iSplit13,iSplit14,iSplit15,iSplit16],[iSplit21,iSplit22,iSplit23,iSplit24,iSplit25,iSplit26]]
         pointLabels = [lPointsBank,lPoints1,lPoints2]
         //setForNewGame()
-        
+        game = BlackJackLogicController(player: guest!, view: self, dbPointer: dbPointer)
     }
 //    func setForNewGame() {
 //        hideAllCards()
@@ -100,30 +100,31 @@ class BlackJackController: UIViewController {
 //        bDoubleDown1.isHidden = true
 //        bDoubleDown2.isHidden = true
 //    }
-    func unhideButtonsForGame() {
-        bCard1.isHidden = false
-        bStand1.isHidden = false
-        bDoubleDown1.isHidden = false
-    }
-    func unhideSplitButtons() {
-        bCard2.isHidden = false
-        bStand2.isHidden = false
-        bDoubleDown2.isHidden = false
-    }
+//    func unhideButtonsForGame() {
+//        bCard1.isHidden = false
+//        bStand1.isHidden = false
+//        bDoubleDown1.isHidden = false
+//    }
+//    func unhideSplitButtons() {
+//        bCard2.isHidden = false
+//        bStand2.isHidden = false
+//        bDoubleDown2.isHidden = false
+//    }
     @IBAction func setStakes(_ sender: UISlider) {
         if bPlay.title(for: .normal) == "play" {
-            stakesMoney = MathHelper.roundFloat(number: slStakes.value)
-            lStakes.text = "\(stakesMoney) $"
+            //stakesMoney = MathHelper.roundFloat(number: slStakes.value)
+            lStakes.text = "\(MathHelper.roundFloat(number: slStakes.value)) $"
             lBalance.text = "\(MathHelper.roundFloat(number:guest?.balance ?? 100.0) - stakesMoney - bustBetMoney) $"
         }
         else if bPlay.title(for: .normal) == "bet on bust" {
-            bustBetMoney = MathHelper.roundFloat(number: slStakes.value)
-            lBustBet.text = "\(bustBetMoney) $"
+            //bustBetMoney = MathHelper.roundFloat(number: slStakes.value)
+            lBustBet.isHidden = false
+            lBustBet.text = "\(MathHelper.roundFloat(number: slStakes.value)) $"
             lBalance.text = "\(MathHelper.roundFloat(number:guest?.balance ?? 100.0) - stakesMoney - bustBetMoney) $"
         }
         else if bPlay.title(for: .normal) == "buy insurance" {
-            insuranceMoney = MathHelper.roundFloat(number: slStakes.value)
-            lInsurance.text = "\(insuranceMoney) $"
+            //insuranceMoney = MathHelper.roundFloat(number: slStakes.value)
+            lInsurance.text = "\(MathHelper.roundFloat(number: slStakes.value)) $"
             lInsurance.isHidden = false
             lBalance.text = "\(MathHelper.roundFloat(number:guest?.balance ?? 100.0) - insuranceMoney) $"
         }
@@ -135,9 +136,9 @@ class BlackJackController: UIViewController {
         case "new game":
             game!.prepareForNewGame()
         case "bet on bust":
-           betOnBust()
+           game!.setBustBet()
         case "buy insurance":
-            buyInsurance()
+            game!.buyInsurance(money: MathHelper.roundFloat(number: slStakes.value))
         default:
             return
         }
@@ -156,15 +157,15 @@ class BlackJackController: UIViewController {
             bustBetMoney = 0.0
         }
     }
-    func buyInsurance() {
-        game!.buyInsurance(money: insuranceMoney)
-        guest?.balance -= insuranceMoney
-        bPlay.isHidden = true
-    }
-    func betOnBust() {
-        switchBustBet.isHidden = true
-        bPlay.setTitle("play", for: .normal)
-    }
+//    func buyInsurance() {
+//        game!.buyInsurance(money: insuranceMoney)
+//        //guest?.balance -= insuranceMoney
+//        //bPlay.isHidden = true
+//    }
+//    func betOnBust() {
+//        switchBustBet.isHidden = true
+//        bPlay.setTitle("play", for: .normal)
+//    }
 //    func startNewGame() {
 //        game!.startNewGame()
     

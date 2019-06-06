@@ -44,12 +44,14 @@ class CasinoEntranceController: UIViewController {
         if guest != nil {
             segCtrlLogin.selectedSegmentIndex = 1
             slCapital.isHidden = true
+            lMoney.isHidden = true
             tUserName.text = guest!.playerName
             bEnter.setTitle("Enter as \(guest!.playerName)", for: .normal)
         }
         else {
             segCtrlLogin.selectedSegmentIndex = 0
             slCapital.isHidden = false
+            lMoney.isHidden = false
             tUserName.text = nil
             bEnter.setTitle("Register and Enter", for: .normal)
         }

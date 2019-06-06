@@ -78,15 +78,13 @@ class BlackJackLogicController {
         twoAceSplit = false
         tookInsurance = false
         betOnBust = false
-        setForNewGame()
+        
     }
     func startNewGame() {
-        reset()
+        setForNewGame()
         view.switchBustBet.isHidden = true
-        stakes[1] = view.stakesMoney
-        bustBetMoney = view.bustBetMoney
-        player.balance -= (stakes[1]+bustBetMoney)
-        dbController.updateBalance(player: player)
+        stakes[1] = MathHelper.roundFloat(number: view.slStakes.value)
+        recalculateAndUpdateBalance(money: stakes[1], addition: false)
         if (bustBetMoney > 0) {
             betOnBust = true
             view.lBustBet.isHidden = true
@@ -109,7 +107,7 @@ class BlackJackLogicController {
 //        index[1] += 1
 //        cards[1][index[1]] = logic.drawCard()
 //        index[1] += 1
-        view.unhideButtonsForGame()
+        unhideButtonsForGame()
         if logic.bankHasAce(bankHand: cards[0]) {
             bankHasAce = true
             view.bPlay.setTitle("buy insurance", for: .normal)
@@ -239,6 +237,7 @@ class BlackJackLogicController {
         //cards[1][1] = Card()
         //index[1] -= 1
         stakes[2] = stakes[1]
+        recalculateAndUpdateBalance(money: stakes[2], addition: false)
         split = true
         countPoints()
         setPointLabel(handIndex: 1)
@@ -247,7 +246,7 @@ class BlackJackLogicController {
             self.performTwoAceSplit()
         }
         else {
-            view.unhideSplitButtons()
+            unhideSplitButtons()
         }
         
     }
@@ -258,8 +257,7 @@ class BlackJackLogicController {
         self.stand(handIndex: 2)
     }
     func doubleDown(handIndex: Int) {
-        player.balance -= stakes[handIndex]
-        dbController.updateBalance(player: player)
+        recalculateAndUpdateBalance(money: stakes[handIndex], addition: false)
         stakes[handIndex] *= 2
         doubleDown[handIndex] = true
         setStakesLabel(handIndex: handIndex)
@@ -274,6 +272,23 @@ class BlackJackLogicController {
     func buyInsurance(money: Float) {
         insuranceMoney = money
         tookInsurance = true
+        recalculateAndUpdateBalance(money: insuranceMoney, addition: false)
+        view.bPlay.isHidden = true
+    }
+    func setBustBet() {
+        view.switchBustBet.isHidden = true
+        bustBetMoney = MathHelper.roundFloat(number: view.slStakes.value)
+        recalculateAndUpdateBalance(money: bustBetMoney, addition: false)
+        view.bPlay.setTitle("play", for: .normal)
+    }
+    private func recalculateAndUpdateBalance(money: Float, addition: Bool) {
+        if addition {
+            player.balance += money
+        }
+        else {
+            player.balance -= money
+        }
+        dbController.updateBalance(player: player)
     }
     func gameIsOver() -> Bool {
         if stand[1] || bust[1] || tripleSeven[1] {
@@ -332,16 +347,17 @@ class BlackJackLogicController {
     }
     private func endGame() {
         let result1 = self.gameOver(handIndex: 1)
-        player.balance += result1.prizeMoney+result1.bustBetPayout+result1.insurancePayout
-        dbController.updateBalance(player: player)
+        let allMoney = result1.prizeMoney+result1.bustBetPayout+result1.insurancePayout
+        recalculateAndUpdateBalance(money: allMoney, addition: true)
         if split {
             let result2 = self.gameOver(handIndex: 2)
-            player.balance += result2.prizeMoney+result2.bustBetPayout+result2.insurancePayout
-            dbController.updateBalance(player: player)
+            let allMoney2 = result2.prizeMoney+result2.bustBetPayout+result2.insurancePayout
+            recalculateAndUpdateBalance(money: allMoney2, addition: true)
         }
         view.bPlay.setTitle("new game", for: .normal)
         view.bPlay.isHidden = false
         hideButtons()
+        reset()
     }
     func bankDraws() /*-> [String] */ {
         //var images = Array<String>()
@@ -352,6 +368,7 @@ class BlackJackLogicController {
             points[0] = logic.countPoints(hand: cards[0])
             //index[0] += 1
         }
+        setPointLabel(handIndex: 0)
         //return images
     }
     func gameOver(handIndex: Int) -> BlackJackGameOver {
@@ -400,6 +417,16 @@ class BlackJackLogicController {
     private func resetBustSwitch() {
         view.switchBustBet.isOn = false
         view.switchBustBet.isHidden = false
+    }
+    func unhideButtonsForGame() {
+        view.bCard1.isHidden = false
+        view.bStand1.isHidden = false
+        view.bDoubleDown1.isHidden = false
+    }
+    func unhideSplitButtons() {
+        view.bCard2.isHidden = false
+        view.bStand2.isHidden = false
+        view.bDoubleDown2.isHidden = false
     }
 }
 class RouletteLogicController {

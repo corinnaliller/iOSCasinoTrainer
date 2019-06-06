@@ -44,6 +44,15 @@ class DatabaseController {
             return nil
         }
     }
+    func getAllPlayerNames() -> [String]? {
+        do {
+            return try db.getAllPlayerNames()
+        }
+        catch {
+            print(db.errorMessage)
+            return nil
+        }
+    }
     func insertPlayer(_ name: String, capital: Float) -> Int? {
         do {
             return try db.insertPlayer(name, capital: capital)
