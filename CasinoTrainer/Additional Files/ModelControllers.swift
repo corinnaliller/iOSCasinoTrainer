@@ -433,32 +433,111 @@ class RouletteLogicController {
     let logic: RouletteLogic
     let view: RouletteController
     let player: Player
-    let db: SQLiteDatabase?
+    let dbController: DatabaseController
     var bet: RouletteBet?
     var stakes: Float?
-    init(player: Player, view: RouletteController) {
-        db = try! SQLiteDatabase.open(path: Database.CasinoTrainer.rawValue)
-        if db == nil {
-            print("Could not open database.")
-        }
-        logic = RouletteLogic()
+    init(player: Player, view: RouletteController, db: OpaquePointer?) {
+        self.dbController = DatabaseController(pointer: db)
+        self.logic = RouletteLogic()
         self.player = player
         self.view = view
     }
-    func rienNeVasPlus(bet: RouletteBet,stakes: Float) -> RouletteGameOver {
+    func rienNeVasPlus(bet: RouletteBet,stakes: Float) /*-> RouletteGameOver */ {
+        view.bSelectBet.isHidden = true
+        view.slStakes.isHidden = true
         self.bet = bet
         self.stakes = stakes
+        player.balance -= self.stakes!
+        dbController.updateBalance(player: player)
+        view.lBalance.text = "Balance: \(MathHelper.roundFloat(number: player.balance)) $"
         logic.rienNeVasPlus()
-        let win = logic.checkWin(numbers: bet.numbers)
-        let prizeMoney: Float
-        if win {
-            prizeMoney = stakes * Float(bet.payout)
+        endGame()
+        
+    }
+    private func endGame() {
+        if logic.winningNumber.color == RouletteColor.black {
+            view.lResult.textColor = UIColor.black
+        }
+        else if logic.winningNumber.color == RouletteColor.red {
+            view.lResult.textColor = UIColor.red
         }
         else {
-            prizeMoney = -stakes
+            view.lResult.textColor = UIColor.green
         }
-        let outcome = RouletteGameOver(winning:logic.winningNumber,outcome: win, bet: bet, stakes: stakes,prize: prizeMoney)
-        try? db?.insertRouletteGameRow(outcome, player: player)
-        return outcome
+        
+        view.lResult.isHidden = false
+        //guest!.endRoulette(outcome: result)
+        
+        view.lWin.isHidden = false
+        view.lBalance.text = "Balance: \(MathHelper.roundFloat(number: player.balance)) $"
+        let win = logic.checkWin(numbers: bet!.numbers)
+        let prizeMoney: Float
+        if win {
+            prizeMoney = self.stakes! * Float(bet!.payout)
+        }
+        else {
+            prizeMoney = -self.stakes!
+        }
+        let outcome = RouletteGameOver(winning:logic.winningNumber,outcome: win, bet: bet!, stakes: stakes!,prize: prizeMoney)
+        dbController.insertRouletteGameRow(outcome, player: player)
+        player.balance += outcome.prize
+        dbController.updateBalance(player: player)
+        view.lResult.text = "\(outcome.winningNumber.number)"
+        if outcome.outcome {
+            view.lWin.text = "\(outcome.prize) $"
+        }
+        else {
+            view.lWin.text = "You lost"
+        }
+    }
+    func noBetSelected() {
+        view.bRienNeVasPlus.isHidden = true
+        view.lBet.text = "No bet selected"
+        view.slStakes.isHidden = true
+        view.lStakes.isHidden = true
+        view.bSelectBet.isHidden=false
+    }
+    func didSelectBet(bet: RouletteBet) {
+        view.bSelectBet.isHidden=true
+        if bet is OutsideBet {
+            let out = bet as! OutsideBet
+            print(out.description())
+        }
+        else if bet is InsideBet {
+            let ins = bet as! InsideBet
+            print(ins.description())
+        }
+        view.bRienNeVasPlus.isHidden = false
+        view.slStakes.value = Float(view.minimum)
+        view.slStakes.minimumValue = Float(view.minimum)
+        if player.balance < (Float((1200 * view.minimum) / (bet.payout - 1))) {
+            view.slStakes.maximumValue = player.balance
+        }
+        else {
+            view.slStakes.maximumValue = Float((1200 * view.minimum) / (bet.payout - 1))
+        }
+        view.lBalance.text = "Balance: \(MathHelper.roundFloat(number: player.balance-view.slStakes.value)) $"
+        view.slStakes.isHidden = false
+        view.lStakes.text = "\(MathHelper.roundFloat(number:view.slStakes.value)) $"
+        view.lStakes.isHidden = false
+        if bet is InsideBet {
+            let b = bet as! InsideBet
+            view.lBet.text = "\(b.description())"
+        }
+        else if bet is OutsideBet {
+            let b = bet as! OutsideBet
+            view.lBet.text = "\(b.description())"
+        }
+        else {
+            view.lBet.text = "Something went wrong!"
+        }
+    }
+    func playAgain() {
+        view.bet = nil
+        
+        view.bSelectBet.isHidden = false
+        view.lResult.isHidden = true
+        view.lWin.isHidden = true
+        view.lBet.text = "No bet selected"
     }
 }

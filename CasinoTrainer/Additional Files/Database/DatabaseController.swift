@@ -78,6 +78,14 @@ class DatabaseController {
             print(db.errorMessage)
         }
     }
+    func insertRouletteGameRow(_ result: RouletteGameOver, player: Player) {
+        do {
+            try db.insertRouletteGameRow(result, player: player)
+        }
+        catch {
+            print(db.errorMessage)
+        }
+    }
     func getPointer() -> OpaquePointer? {
         return db.dbPointer
     }
