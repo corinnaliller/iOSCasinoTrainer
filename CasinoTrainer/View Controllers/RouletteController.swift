@@ -108,8 +108,7 @@ class RouletteController: UIViewController {
        
     }
     @IBAction func selectStakes(_ sender: UISlider) {
-        lStakes.text = "\(MathHelper.roundFloat(number: sender.value)) $"
-        lBalance.text = "Balance: \(MathHelper.roundFloat(number:guest!.balance-sender.value)) $"
+        roulette?.selectStakes()
     }
     @IBAction func selectBet(_ sender: UIButton) {
         performSegue(withIdentifier: "selectRouletteBet", sender: self)

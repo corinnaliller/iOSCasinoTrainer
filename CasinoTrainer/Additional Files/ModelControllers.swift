@@ -540,4 +540,331 @@ class RouletteLogicController {
         view.lWin.isHidden = true
         view.lBet.text = "No bet selected"
     }
+    func selectStakes() {
+        view.lStakes.text = "\(MathHelper.roundFloat(number: view.slStakes.value)) $"
+        view.lBalance.text = "Balance: \(MathHelper.roundFloat(number:player.balance-view.slStakes.value)) $"
+    }
+}
+
+class SelectRouletteBetController {
+    let view: RouletteBetViewController
+    var bet: RouletteBet?
+    var selectedNumber: Int
+    var splitNumber: Int
+    
+    init(view: RouletteBetViewController) {
+        self.view = view
+        self.selectedNumber = 37
+        self.splitNumber = 0
+        hideFullNumberButtons()
+        hideColumnButtons()
+        hideDozenButtons()
+        hideSplitButtons()
+    }
+    func selectFullNumber(sender: UIButton) {
+        resetButtons(collection: "full")
+        sender.backgroundColor = nil
+        sender.alpha = 1
+        sender.setImage(UIImage(named: "Chips"), for: .normal)
+        selectedNumber = sender.tag
+        view.lMessage.text = "\(selectedNumber)"
+    }
+    func selectSplitNumber(sender: UIButton) {
+        resetButtons(collection: "full")
+        hideSplitButtons()
+        view.bSetBet.isHidden = true
+        sender.backgroundColor = nil
+        sender.alpha = 1
+        sender.setImage(UIImage(named: "Chips"), for: .normal)
+        selectedNumber = sender.tag
+        view.lMessage.text = "Split \(selectedNumber)"
+        unhideSplitButtons(number: selectedNumber)
+    }
+    func selectCorner(sender: UIButton) {
+        resetButtons(collection: "full")
+        sender.backgroundColor = nil
+        sender.alpha = 1
+        sender.setImage(UIImage(named: "Chips"), for: .normal)
+        selectedNumber = sender.tag
+        view.lMessage.text = "Corner \(selectedNumber): \(selectedNumber), \(selectedNumber+1), \(selectedNumber+3), \(selectedNumber+4)"
+    }
+    func selectSixLine(sender: UIButton) {
+        resetButtons(collection: "full")
+        sender.backgroundColor = nil
+        sender.alpha = 1
+        sender.setImage(UIImage(named: "Chips"), for: .normal)
+        selectedNumber = sender.tag
+        view.lMessage.text = "Six Line \(selectedNumber)"
+    }
+    func selectStreet(sender: UIButton) {
+        resetButtons(collection: "full")
+        sender.backgroundColor = nil
+        sender.alpha = 1
+        sender.setImage(UIImage(named: "Chips"), for: .normal)
+        selectedNumber = sender.tag
+        view.lMessage.text = "Street \(selectedNumber)"
+    }
+    func selectSplit(tag: Int) {
+        splitNumber = tag
+        view.bSetBet.isHidden = false
+        hideSplitButtons()
+    }
+    func selectColumnBet(_ sender: UIButton) {
+        resetButtons(collection: "column")
+        sender.backgroundColor = nil
+        sender.alpha = 1
+        sender.setImage(UIImage(named: "Chips"), for: .normal)
+        selectedNumber = sender.tag
+        let count: String
+        switch sender.tag {
+        case 1:
+            count = "1st"
+        case 2:
+            count = "2nd"
+        case 3:
+            count = "3rd"
+        default:
+            count = "\(sender.tag)th"
+        }
+        view.lMessage.text = "\(count) Column"
+    }
+    func selectDozenBet(_ sender: UIButton) {
+        resetButtons(collection: "dozen")
+        sender.backgroundColor = nil
+        sender.alpha = 1
+        sender.setImage(UIImage(named: "Chips"), for: .normal)
+        selectedNumber = sender.tag
+        let count: String
+        switch sender.tag {
+        case 1:
+            count = "1st"
+        case 2:
+            count = "2nd"
+        case 3:
+            count = "3rd"
+        default:
+            count = "\(sender.tag)th"
+        }
+        view.lMessage.text = "\(count) Dozen"
+    }
+    func selectOutsideBet(_ sender: UIButton) {
+        resetButtons(collection: "outside")
+        sender.backgroundColor = nil
+        sender.alpha = 1
+        sender.setImage(UIImage(named: "Chips"), for: .normal)
+        selectedNumber = sender.tag
+        let out: String
+        switch sender.tag {
+        case 1:
+            out = "Low"
+        case 2:
+            out = "Even"
+        case 3:
+            out = "Red"
+        case 4:
+            out = "Black"
+        case 5:
+            out = "Odd"
+        case 6:
+            out = "High"
+        default:
+            return
+        }
+        view.lMessage.text = "\(out) Numbers"
+    }
+    func selectFullNumber(_ sender: UIButton) {
+        switch view.betTypes.selectedSegmentIndex {
+        case 1:
+            selectFullNumber(sender: sender)
+        case 4:
+            selectCorner(sender: sender)
+        case 5:
+            selectSplitNumber(sender: sender)
+        case 6:
+            selectSixLine(sender: sender)
+        case 7:
+            selectStreet(sender:sender)
+        default:
+            return
+        }
+    }
+    func selectBetType(_ sender: UISegmentedControl) {
+        selectedNumber = 37
+        splitNumber = 0
+        view.lMessage.text = ""
+        switch sender.selectedSegmentIndex {
+        case 0:
+            resetButtons(collection: "outside"); unhideOutsideButtons();hideDozenButtons();hideColumnButtons();hideFullNumberButtons();hideSplitButtons()
+        case 1:
+            resetButtons(collection: "full");hideOutsideButtons();hideDozenButtons();hideColumnButtons();unhideFullNumberButtons();hideSplitButtons()
+        case 2:
+            resetButtons(collection: "dozen");hideOutsideButtons();unhideDozenButtons();hideColumnButtons();hideFullNumberButtons();hideSplitButtons()
+        case 3:
+            resetButtons(collection: "column");hideOutsideButtons();hideDozenButtons();unhideColumnButtons();hideFullNumberButtons();hideSplitButtons()
+        case 4:
+            resetButtons(collection: "full");hideOutsideButtons();hideDozenButtons();hideColumnButtons();hideForCorner();hideSplitButtons()
+        case 5:
+            resetButtons(collection: "full");hideOutsideButtons();hideDozenButtons();hideColumnButtons();unhideFullNumberButtons()
+        case 6:
+            resetButtons(collection: "full");hideOutsideButtons();hideDozenButtons();hideColumnButtons();hideForSixLine();hideSplitButtons()
+        case 7:
+            resetButtons(collection: "full");hideOutsideButtons();hideDozenButtons();hideColumnButtons();hideForStreet();hideSplitButtons()
+        case 8: hideOutsideButtons();hideDozenButtons();hideColumnButtons();hideFullNumberButtons();view.lMessage.text="First Three";hideSplitButtons();selectedNumber = 0
+        case 9:
+            hideOutsideButtons();hideDozenButtons();hideColumnButtons();hideFullNumberButtons();view.lMessage.text="First Four";hideSplitButtons();selectedNumber = 0
+        default:
+            return
+        }
+    }
+    func placeRouletteBet() -> Bool {
+        if selectedNumber != 37 {
+            if view.betTypes.selectedSegmentIndex == 0 {
+                let type: Outside
+                switch selectedNumber {
+                case 1: type = Outside.low
+                case 2: type = Outside.even
+                case 3: type = Outside.red
+                case 4: type = Outside.black
+                case 5: type = Outside.odd
+                case 6: type = Outside.high
+                default: return false
+                }
+                bet = OutsideBet(type: type)
+            }
+            else {
+                let type: Inside
+                switch view.betTypes.selectedSegmentIndex {
+                case 1: type = Inside.straightUp
+                case 2: type = Inside.dozen
+                case 3: type = Inside.column
+                case 4: type = Inside.corner
+                case 5: type = Inside.split
+                case 6: type = Inside.sixLine
+                case 7: type = Inside.street
+                case 8: type = Inside.firstThree
+                case 9: type = Inside.firstFour
+                default: return false
+                }
+                bet = InsideBet(type: type, number: selectedNumber, def: splitNumber)
+            }
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    func hideForCorner() {
+        for b in view.fullNumberButtons {
+            if (b.tag % 3) == 0 || b.tag == 34 || b.tag == 35 {
+                b.isHidden = true
+            }
+            else {
+                b.isHidden = false
+            }
+        }
+    }
+    func hideForStreet() {
+        for b in view.fullNumberButtons {
+            if (b.tag % 3) == 0 || (b.tag % 3) == 2 {
+                b.isHidden = true
+            }
+            else {
+                b.isHidden = false
+            }
+        }
+    }
+    func hideForSixLine() {
+        for b in view.fullNumberButtons {
+            if (b.tag % 3) == 0 || (b.tag % 3) == 2 || b.tag == 34 {
+                b.isHidden = true
+            }
+            else {
+                b.isHidden = false
+            }
+        }
+    }
+    func hideFullNumberButtons() {
+        for b in view.fullNumberButtons {
+            b.isHidden = true
+        }
+    }
+    func hideOutsideButtons() {
+        for b in view.outsideButtons {
+            b.isHidden = true
+        }
+    }
+    func hideColumnButtons() {
+        for b in view.columnButtons {
+            b.isHidden = true
+        }
+    }
+    func hideDozenButtons() {
+        for b in view.dozenButtons {
+            b.isHidden = true
+        }
+    }
+    func hideSplitButtons() {
+        view.split1.isHidden = true
+        view.split2.isHidden = true
+    }
+    func unhideFullNumberButtons() {
+        for b in view.fullNumberButtons {
+            b.isHidden = false
+        }
+    }
+    func unhideOutsideButtons() {
+        for b in view.outsideButtons {
+            b.isHidden = false
+        }
+    }
+    func unhideColumnButtons() {
+        for b in view.columnButtons {
+            b.isHidden = false
+        }
+    }
+    func unhideDozenButtons() {
+        for b in view.dozenButtons {
+            b.isHidden = false
+        }
+    }
+    func unhideSplitButtons(number: Int) {
+        if (number % 3) == 0 {
+            if number == 36 {
+                view.lMessage.text = "No split possible"
+            }
+            else {
+                view.split2.isHidden = false
+            }
+        }
+        else if number == 34 || number == 35 {
+            view.split1.isHidden = false
+        }
+        else {
+            view.split1.isHidden = false
+            view.split2.isHidden = false
+        }
+        
+    }
+    func resetButtons(collection: String) {
+        let coll: [UIButton]
+        switch collection {
+        case "full":
+            coll = view.fullNumberButtons
+        case "column":
+            coll = view.columnButtons
+        case "dozen":
+            coll = view.dozenButtons
+        case "outside":
+            coll = view.outsideButtons
+        default:
+            return
+        }
+        
+        for b in coll {
+            b.backgroundColor = UIColor.lightGray
+            b.alpha = 0.6
+            b.setImage(nil, for: .normal)
+        }
+    }
 }
