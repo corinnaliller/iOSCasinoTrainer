@@ -26,7 +26,6 @@ struct GeneralBlackJackStatistics {
             ],
             [
                 BlackJackOutcomes.bankHadBlackJack: 0,
-                BlackJackOutcomes.bankWonWithBlackJack: 0,
                 BlackJackOutcomes.tookInsurance: 0,
                 BlackJackOutcomes.insuranceWasPaidOut: 0,
                 BlackJackOutcomes.bankWentBust: 0,
@@ -54,12 +53,11 @@ struct GeneralBlackJackStatistics {
             ],
             [
                 BlackJackOutcomes.bankHadBlackJack: bank[0],
-                BlackJackOutcomes.bankWonWithBlackJack: bank[1],
-                BlackJackOutcomes.tookInsurance: bank[2],
-                BlackJackOutcomes.insuranceWasPaidOut: bank[3],
-                BlackJackOutcomes.bankWentBust: bank[4],
-                BlackJackOutcomes.betOnBust: bank[5],
-                BlackJackOutcomes.bustBetsWon: bank[6]
+                BlackJackOutcomes.tookInsurance: bank[1],
+                BlackJackOutcomes.insuranceWasPaidOut: bank[2],
+                BlackJackOutcomes.bankWentBust: bank[3],
+                BlackJackOutcomes.betOnBust: bank[4],
+                BlackJackOutcomes.bustBetsWon: bank[5]
             ],
             [
                 BlackJackOutcomes.doubledDown: extra[0],

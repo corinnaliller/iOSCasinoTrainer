@@ -43,7 +43,7 @@ extension CasinoGuest : SQLTable {
         return """
         CREATE TABLE IF NOT EXISTS \(TableNames.Guest.rawValue) (
         Id INTEGER PRIMARY KEY AUTOINCREMENT,
-        Name VARCHAR(255) NOT NULL UNIQUE,
+        Name VARCHAR2(255) NOT NULL UNIQUE,
         Capital DOUBLE NOT NULL,
         Balance DOUBLE NOT NULL
         );
@@ -91,11 +91,13 @@ extension BlackJackGame : SQLTable {
         CREATE TABLE IF NOT EXISTS \(TableNames.BlackJackGames.rawValue) (
         Id INTEGER NOT NULL,
         GameNo INTEGER PRIMARY KEY AUTOINCREMENT,
-        Status VARCHAR(1) NOT NULL,
-        Had_Blackjack VARCHAR(1) NOT NULL,
-        Bust VARCHAR(1) NOT NULL,
-        Bank_went_bust VARCHAR(1) NOT NULL,
-        Bank_had_Blackjack VARCHAR(1) NOT NULL,
+        Status Int NOT NULL,
+        Had_Blackjack Int NOT NULL,
+        Won_with_Blackjack Int NOT NULL,
+        Had_Triple_Seven Int NOT NULL,
+        Bust Int NOT NULL,
+        Bank_went_bust Int NOT NULL,
+        Bank_had_Blackjack Int NOT NULL,
         Stakes DOUBLE NOT NULL,
         Prize DOUBLE NOT NULL,
         Points INT NOT NULL,

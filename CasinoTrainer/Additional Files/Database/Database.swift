@@ -92,12 +92,12 @@ extension SQLiteDatabase {
         return Int(id)
     }
     func insertBlackJackGameRow(_ game: BlackJackGameOver, player: Player) throws {
-        let insertBlackJackSQL = "INSERT INTO \(TableNames.BlackJackGames.rawValue) (Id, Status, Had_Blackjack, Bust, Bank_went_bust, Bank_had_Blackjack, Stakes, Prize, Points, Bank_Points, Bet_on_Bust, Took_Insurance, Doubled_down) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        let insertBlackJackSQL = "INSERT INTO \(TableNames.BlackJackGames.rawValue) (Id, Status, Had_Blackjack, Bust, Bank_went_bust, Bank_had_Blackjack, Stakes, Prize, Points, Bank_Points, Bet_on_Bust, Took_Insurance, Doubled_down, Won_with_Blackjack, Had_Triple_Seven) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
         let insertStatement = try prepareStatement(sql: insertBlackJackSQL)
         defer {
             sqlite3_finalize(insertStatement)
         }
-        guard sqlite3_bind_int(insertStatement, 1, Int32(player.id)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 2, Int32(game.winOrLose.rawValue)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 3, boolToInt(test: game.hadBlackJack)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 4, boolToInt(test: game.wentBust)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 5, boolToInt(test: game.bankWentBust)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 6, boolToInt(test: game.bankHadBlackJack)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 7, Double(game.stakesMoney)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 8, Double(game.prizeMoney)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 9, Int32(game.points)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 10, Int32(game.bankPoints)) == SQLITE_OK &&  sqlite3_bind_int(insertStatement, 11, boolToInt(test: game.betOnBust)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 12, boolToInt(test: game.tookInsurance)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 13, boolToInt(test: game.doubledDown)) == SQLITE_OK else {
+        guard sqlite3_bind_int(insertStatement, 1, Int32(player.id)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 2, Int32(game.winOrLose.rawValue)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 3, boolToInt(test: game.hadBlackJack)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 4, boolToInt(test: game.wentBust)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 5, boolToInt(test: game.bankWentBust)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 6, boolToInt(test: game.bankHadBlackJack)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 7, Double(game.stakesMoney)) == SQLITE_OK && sqlite3_bind_double(insertStatement, 8, Double(game.prizeMoney)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 9, Int32(game.points)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 10, Int32(game.bankPoints)) == SQLITE_OK &&  sqlite3_bind_int(insertStatement, 11, boolToInt(test: game.betOnBust)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 12, boolToInt(test: game.tookInsurance)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 13, boolToInt(test: game.doubledDown)) == SQLITE_OK && sqlite3_bind_int(insertStatement, 14, boolToInt(test: (game.winOrLose.rawValue == 3))) == SQLITE_OK && sqlite3_bind_int(insertStatement, 15, boolToInt(test: game.hadTripleSeven)) == SQLITE_OK else {
             throw SQLiteError.Bind(message: errorMessage)
         }
         guard sqlite3_step(insertStatement) == SQLITE_DONE else {
@@ -202,9 +202,12 @@ extension SQLiteDatabase {
                 let wonDD = sqlite3_column_int(queryStatement, 0)
                 return Int(wonDD)
     }
-    func getBlackJackStatistics(player: Player) -> GeneralBlackJackStatistics? {
-        // Change here
-        let querySql = "SELECT * FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ?;"
+    func getBlackJackStatistics(player: Player) throws -> GeneralBlackJackStatistics? {
+        let generalStat = try getWinLossCounts(id: player.id)
+        let insurancesPaidOut = try insurancePayouts(id: player.id)
+        let bustBetsPaidOut = try bustBetPayouts(id: player.id)
+        let wonDoubleDown = gamesWonAfterDoubleDown(player: player)
+        let querySql = "SELECT sum(had_blackjack), sum(had_triple_seven), sum(bust), sum(bank_had_blackjack), count(bi.gameNo), sum(bank_went_bust), count(bb.gameNo), sum(doubled_down) FROM (\(TableNames.BlackJackGames.rawValue) bg JOIN \(TableNames.BlackJackBustBet.rawValue) bb ON bg.GameNo = bb.GameNo) JOIN \(TableNames.BlackJackInsurance.rawValue) bi ON bg.GameNo = bi.GameNo WHERE Id = ?;"
         guard let queryStatement = try? prepareStatement(sql: querySql) else {
             return nil
         }
@@ -217,8 +220,21 @@ extension SQLiteDatabase {
         guard sqlite3_step(queryStatement) == SQLITE_ROW else {
             return nil
         }
-        //let wonDD = sqlite3_column_int(queryStatement, 0)
-        return nil
+        var playerStat = [Int]()
+        var bankStat = [Int]()
+        var extraStat = [Int]()
+        playerStat.append(Int(sqlite3_column_int(queryStatement, 0)))
+        playerStat.append(Int(generalStat[3] ?? 0))
+        playerStat.append(Int(sqlite3_column_int(queryStatement, 1)))
+        playerStat.append(Int(sqlite3_column_int(queryStatement, 2)))
+        bankStat.append(Int(sqlite3_column_int(queryStatement, 3)))
+        bankStat.append(Int(sqlite3_column_int(queryStatement, 4)))
+        bankStat.append(insurancesPaidOut)
+        bankStat.append(Int(sqlite3_column_int(queryStatement, 5)))
+        bankStat.append(bustBetsPaidOut)
+        extraStat.append(Int(sqlite3_column_int(queryStatement, 6)))
+        extraStat.append(wonDoubleDown)
+        return GeneralBlackJackStatistics(general: generalStat as! [Int], player: playerStat, bank: bankStat, extra: extraStat)
     }
     func getPlayer(name: String) throws -> CasinoGuest? {
         let querySql = "SELECT * FROM \(TableNames.Guest.rawValue) WHERE Name = ?;"
@@ -241,6 +257,56 @@ extension SQLiteDatabase {
         print("Retrieving \(playerName), ID: \(playerID), Capital: \(playerCapital), Balance: \(playerBalance)")
         return CasinoGuest(id: playerID, name: playerName, capital: playerCapital, balance: playerBalance)
     }
+    private func getWinLossCounts(id: Int) throws -> [Int?] {
+        var outcomes = [Int]()
+        let querySql = "SELECT count(status) FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ? GROUP BY status;"
+        guard let queryStatement = try? prepareStatement(sql: querySql) else {
+            return [Int]()
+        }
+        defer {
+            sqlite3_finalize(queryStatement)
+        }
+        while (sqlite3_step(queryStatement) == SQLITE_ROW)  {
+            outcomes.append(Int(sqlite3_column_int(queryStatement, 0)))
+        }
+        return outcomes
+    }
+    private func insurancePayouts(id: Int) throws -> Int {
+        let querySql = "SELECT count(*) FROM \(TableNames.BlackJackInsurance.rawValue) WHERE id = ? AND payout > 0;"
+        guard let queryStatement = try? prepareStatement(sql: querySql) else {
+            return 0
+        }
+        defer {
+            sqlite3_finalize(queryStatement)
+        }
+        guard sqlite3_bind_int(queryStatement, 1, Int32(id)) == SQLITE_OK else {
+            return 0
+        }
+        guard sqlite3_step(queryStatement) == SQLITE_ROW else {
+            return 0
+        }
+        let insurances = Int(sqlite3_column_int(queryStatement, 0))
+        
+        return insurances
+    }
+    private func bustBetPayouts(id: Int) throws -> Int {
+        let querySql = "SELECT count(*) FROM \(TableNames.BlackJackBustBet.rawValue) WHERE id = ? AND payout > 0;"
+        guard let queryStatement = try? prepareStatement(sql: querySql) else {
+            return 0
+        }
+        defer {
+            sqlite3_finalize(queryStatement)
+        }
+        guard sqlite3_bind_int(queryStatement, 1, Int32(id)) == SQLITE_OK else {
+            return 0
+        }
+        guard sqlite3_step(queryStatement) == SQLITE_ROW else {
+            return 0
+        }
+        let bustBets = Int(sqlite3_column_int(queryStatement, 0))
+        
+        return bustBets
+    }
     func getAllPlayerNames() throws -> [String]? {
         let querySql = "SELECT Name FROM \(TableNames.Guest.rawValue);"
         var playerNames = [String]()
@@ -256,11 +322,6 @@ extension SQLiteDatabase {
 //        guard sqlite3_step(queryStatement) == SQLITE_ROW else {
 //            return nil
 //        }
-        let playerID = sqlite3_column_int(queryStatement, 0)
-        let playerName = String(cString: sqlite3_column_text(queryStatement, 1)) as NSString
-        let playerCapital = sqlite3_column_double(queryStatement, 2)
-        let playerBalance = sqlite3_column_double(queryStatement, 3)
-        print("Retrieving \(playerName), ID: \(playerID), Capital: \(playerCapital), Balance: \(playerBalance)")
         return playerNames
     }
 //    func blackJackGame(id: Int32) -> BlackJackGame? {
