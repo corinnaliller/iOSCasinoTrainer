@@ -64,5 +64,13 @@ struct GeneralBlackJackStatistics {
                 BlackJackOutcomes.wonAfterDoubleDown: extra[1]
             ]
         ]
+        printData()
+    }
+    private func printData() {
+        for sections in allStats {
+            for outcomes in sections {
+                print("\(outcomes.key.rawValue): \(outcomes.value)")
+            }
+        }
     }
 }

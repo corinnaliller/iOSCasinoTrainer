@@ -15,6 +15,7 @@ class SQLiteDatabase {
     
     init(dbPointer: OpaquePointer?) {
         self.dbPointer = dbPointer
+        print(Database.CasinoTrainer.path)
     }
     deinit {
         sqlite3_close(dbPointer)
@@ -217,7 +218,7 @@ extension SQLiteDatabase {
         let insurancesPaidOut = try insurancePayouts(id: player.id)
         let bustBetsPaidOut = try bustBetPayouts(id: player.id)
         let wonDoubleDown = gamesWonAfterDoubleDown(player: player)
-        let querySql = "SELECT sum(had_blackjack), sum(had_triple_seven), sum(bust), sum(bank_had_blackjack), count(bi.gameNo), sum(bank_went_bust), count(bb.gameNo), sum(doubled_down) FROM (\(TableNames.BlackJackGames.rawValue) bg JOIN \(TableNames.BlackJackBustBet.rawValue) bb ON bg.GameNo = bb.GameNo) JOIN \(TableNames.BlackJackInsurance.rawValue) bi ON bg.GameNo = bi.GameNo WHERE bg.Id = ?;"
+        let querySql = "SELECT count(had_blackjack), count(had_triple_seven), sum(bust), sum(bank_had_blackjack), count(bi.gameNo), sum(bank_went_bust), count(bb.gameNo), sum(doubled_down) FROM (\(TableNames.BlackJackGames.rawValue) bg JOIN \(TableNames.BlackJackBustBet.rawValue) bb ON bg.GameNo = bb.GameNo) JOIN \(TableNames.BlackJackInsurance.rawValue) bi ON bg.GameNo = bi.GameNo WHERE bg.Id = ?;"
         guard let queryStatement = try? prepareStatement(sql: querySql) else {
             return nil
         }

@@ -64,9 +64,7 @@ class DataAnalysis : NSObject {
                 AbsoluteAndPercent(BlackJackOutcomes.playerWentBust.rawValue, bjstat!.allStats[1][.playerWentBust]!, Float(bjstat!.allStats[1][.playerWentBust]!) / Float(bjTotal)*100)
             ],
             [
-                AbsoluteAndPercent(BlackJackOutcomes.bankHadBlackJack.rawValue, bjstat!.allStats[2][.bankHadBlackJack]!, Float(bjstat!.allStats[2][.bankHadBlackJack]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent(BlackJackOutcomes.bankWonWithBlackJack.rawValue, bjstat!.allStats[2][.bankWonWithBlackJack]!, Float(bjstat!.allStats[2][.bankWonWithBlackJack]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent(BlackJackOutcomes.insuranceWasPaidOut.rawValue, bjstat!.allStats[2][.insuranceWasPaidOut]!, Float(bjstat!.allStats[2][.insuranceWasPaidOut]!)/Float(bjstat!.allStats[2][.tookInsurance]!)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.bankHadBlackJack.rawValue, bjstat!.allStats[2][.bankHadBlackJack]!, Float(bjstat!.allStats[2][.bankHadBlackJack]!)/Float(bjTotal)*100),                AbsoluteAndPercent(BlackJackOutcomes.insuranceWasPaidOut.rawValue, bjstat!.allStats[2][.insuranceWasPaidOut]!, Float(bjstat!.allStats[2][.insuranceWasPaidOut]!)/Float(bjstat!.allStats[2][.tookInsurance]!)*100),
                 AbsoluteAndPercent(BlackJackOutcomes.bankWentBust.rawValue, bjstat!.allStats[2][.bankWentBust]!, Float(bjstat!.allStats[2][.bankWentBust]!)/Float(bjTotal)*100),
                 AbsoluteAndPercent(BlackJackOutcomes.bustBetsWon.rawValue, bjstat!.allStats[2][.bustBetsWon]!, Float(bjstat!.allStats[2][.bustBetsWon]!)/Float(bjstat!.allStats[2][.betOnBust]!)*100)
             ],
@@ -92,7 +90,7 @@ extension DataAnalysis : UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: StatisticsCell.self)) as! StatisticsCell
-        print("section: \(indexPath.section), row: \(indexPath.row)")
+        //print("section: \(indexPath.section), row: \(indexPath.row)")
         let strings = bjData[indexPath.section][indexPath.row]
         cell.labelText = strings.name
         cell.absoluteText = strings.absoluteString
