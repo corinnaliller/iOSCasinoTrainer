@@ -21,6 +21,7 @@ class CasinoEntranceController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //dropAllTables()
 //        do {
 //            try db = SQLiteDatabase.open(path: Database.CasinoTrainer.path)
 //            try db.createTable(table: CasinoGuest.self)
@@ -120,5 +121,8 @@ class CasinoEntranceController: UIViewController {
 
     }
     
+    private func dropAllTables() {
+        dbController.dropAllTables()
+    }
 
 }

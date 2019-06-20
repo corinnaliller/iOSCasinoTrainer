@@ -48,7 +48,7 @@ class CasinoFoyerController: UIViewController {
     @IBAction func goToStatistics(_ sender: UIButton) {
         let statVC: StatisticsChoiceController = UIStoryboard(name: "Statistics", bundle: nil).instantiateInitialViewController() as! StatisticsChoiceController
         statVC.guest = self.guest
-        //statVC.dbPointer = self.dbPointer
+        statVC.dbPointer = self.dbPointer
         self.navigationController?.pushViewController(statVC, animated: true)
     }
     override func viewWillAppear(_ animated: Bool) {

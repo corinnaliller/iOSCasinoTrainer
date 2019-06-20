@@ -14,6 +14,7 @@ enum TableNames : String {
 
 protocol SQLTable {
     static var createStatement: String { get }
+    static var dropStatement: String {get}
 }
 
 struct CasinoGuest {
@@ -39,6 +40,12 @@ struct CasinoGuest {
     }
 }
 extension CasinoGuest : SQLTable {
+    static var dropStatement: String {
+        return """
+        DROP TABLE \(TableNames.Guest.rawValue);
+        """
+    }
+    
     static var createStatement: String {
         return """
         CREATE TABLE IF NOT EXISTS \(TableNames.Guest.rawValue) (
@@ -49,7 +56,6 @@ extension CasinoGuest : SQLTable {
         );
         """
     }
-    
     
 }
 class BlackJackGame {
@@ -109,6 +115,11 @@ extension BlackJackGame : SQLTable {
         );
         """
     }
+    static var dropStatement: String {
+        return """
+        DROP TABLE \(TableNames.BlackJackGames.rawValue);
+        """
+    }
 }
 class BlackJackBustBet {
     let id: Int32
@@ -137,6 +148,11 @@ extension BlackJackBustBet : SQLTable {
         );
         """
     }
+    static var dropStatement: String {
+        return """
+        DROP TABLE \(TableNames.BlackJackBustBet.rawValue);
+        """
+    }
 }
 class BlackJackInsurance {
     let id: Int32
@@ -162,6 +178,11 @@ extension BlackJackInsurance : SQLTable {
         FOREIGN KEY (Id) REFERENCES \(TableNames.Guest.rawValue) (Id)
         FOREIGN KEY (GameNo) REFERENCES \(TableNames.BlackJackGames.rawValue) (GameNo)
         );
+        """
+    }
+    static var dropStatement: String {
+        return """
+        DROP TABLE \(TableNames.BlackJackInsurance.rawValue);
         """
     }
 }
@@ -197,6 +218,11 @@ extension RouletteGame : SQLTable {
         Won INT NOT NULL,
         FOREIGN KEY (Id) REFERENCES \(TableNames.Guest.rawValue) (Id)
         );
+        """
+    }
+    static var dropStatement: String {
+        return """
+        DROP TABLE \(TableNames.RouletteGames.rawValue);
         """
     }
 }
