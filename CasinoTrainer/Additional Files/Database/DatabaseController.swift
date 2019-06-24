@@ -8,7 +8,8 @@
 
 import Foundation
 import SQLite3
-
+/// Dieser Klasse dient dazu, den Zugriff auf die Datenbank zu kapseln.
+/// Sie kennt die Datenbank und kann ihre Fehlermeldungen abfangen und anzeigen.
 class DatabaseController {
     var db: SQLiteDatabase
     
@@ -34,6 +35,7 @@ class DatabaseController {
     }
     init(pointer: OpaquePointer?) {
         db = SQLiteDatabase(dbPointer: pointer)
+        print("controller: db pointer is: \(pointer)")
     }
     func getPlayer(name: String) -> CasinoGuest? {
         do {

@@ -111,6 +111,7 @@ class BlackJackLogicController {
         if logic.bankHasAce(bankHand: cards[0]) {
             bankHasAce = true
             view.bPlay.setTitle("buy insurance", for: .normal)
+            view.bPlay.isHidden = false
             view.slStakes.maximumValue = player.balance
             view.slStakes.minimumValue = 0
             view.slStakes.value = 0

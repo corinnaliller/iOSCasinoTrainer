@@ -9,12 +9,21 @@
 import Foundation
 import SQLite3
 
-/// BODY
+/// Die Datenbank
+/// Es gibt leider ein paar Probleme. Die Daten werden zwar in die Datenbank
+/// eingetragen, aber das Abrufen funktioniert nicht wie es soll.
+/// Auf der Seite https://sqlitebrowser.org kann man sich einen Browser für
+/// die Daten holen, damit man sich diese ansehen kann.
+/// Außerdem gibt es Probleme mit dem Pointer. Die VCs geben den Pointer für
+/// die Datenbank untereinander weiter sodass immer auf die gleiche DB verwiesen wird
+/// und nicht ständig eine neue geöffnet. Allerdings kommt trotzdem immer wieder
+/// eine Fehlermeldung, der Pointer sei "invalid".
 class SQLiteDatabase {
     let dbPointer: OpaquePointer?
     
     init(dbPointer: OpaquePointer?) {
         self.dbPointer = dbPointer
+        print("Database-Pointer: \(dbPointer)")
         print(Database.CasinoTrainer.path)
     }
     deinit {
@@ -31,6 +40,7 @@ class SQLiteDatabase {
     }
     static func open(path: String) throws -> SQLiteDatabase {
         var db: OpaquePointer? = nil
+        print("Opening database")
         
         if sqlite3_open(path, &db) == SQLITE_OK {
             return SQLiteDatabase(dbPointer: db)
@@ -50,6 +60,7 @@ class SQLiteDatabase {
             throw SQLiteError.OpenDatabase(message: "No Error Message provided")
         }
     }
+
     func close() {
         sqlite3_close(dbPointer)
     }
@@ -84,6 +95,7 @@ extension SQLiteDatabase {
         }
         print("\(table) table created")
     }
+    // Neuen Spieler anlegen
     func insertPlayer(_ player: String, capital: Float) throws -> Int {
         let insertPlayerSQL = "INSERT INTO \(TableNames.Guest.rawValue) (Name, Capital, Balance) VALUES (?, ?, ?);"
         let insertStatement = try prepareStatement(sql: insertPlayerSQL)
@@ -102,8 +114,11 @@ extension SQLiteDatabase {
         
         return Int(id)
     }
+    // Blackjack-Spiel speichern
     func insertBlackJackGameRow(_ game: BlackJackGameOver, player: Player) throws {
         let insertBlackJackSQL = "INSERT INTO \(TableNames.BlackJackGames.rawValue) (Id, Status, Had_Blackjack, Bust, Bank_went_bust, Bank_had_Blackjack, Stakes, Prize, Points, Bank_Points, Bet_on_Bust, Took_Insurance, Doubled_down, Won_with_Blackjack, Had_Triple_Seven) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        print("Inserting for player with id: \(player.id)")
+        print("Inserting for player with id: \(Int32(player.id))")
         let insertStatement = try prepareStatement(sql: insertBlackJackSQL)
         defer {
             sqlite3_finalize(insertStatement)
@@ -123,6 +138,7 @@ extension SQLiteDatabase {
         }
         print("Successfully inserted Blackjack row")
     }
+    // Bust-Wette speichern
     private func insertBlackJackBustBetRow(playerId: Int, gameNo: Int32, stake: Double, payout: Double) throws {
         let insertBlackJackSQL = "INSERT INTO \(TableNames.BlackJackBustBet.rawValue) VALUES (?, ?, ?, ?);"
         let insertStatement = try prepareStatement(sql: insertBlackJackSQL)
@@ -137,6 +153,7 @@ extension SQLiteDatabase {
         }
         print("Successfully inserted bust bet row")
     }
+    // Blackjack-Versicherung speichern
     private func insertBlackJackInsuranceRow(playerId: Int, gameNo: Int32, stake: Double, payout: Double) throws {
         let insertBlackJackSQL = "INSERT INTO \(TableNames.BlackJackInsurance.rawValue) VALUES (?, ?, ?, ?);"
         let insertStatement = try prepareStatement(sql: insertBlackJackSQL)
@@ -151,6 +168,7 @@ extension SQLiteDatabase {
         }
         print("Successfully inserted insurance row")
     }
+    // Roulette-Spiel speichern
     func insertRouletteGameRow(_ game: RouletteGameOver, player: Player) throws {
         let insertRouletteSQL = "INSERT INTO \(TableNames.RouletteGames.rawValue) (Id, Inside_or_Outside, Bet_type, Stake, Payout, won) VALUES (?, ?, ?, ?, ?, ?);"
         let insertStatement = try prepareStatement(sql: insertRouletteSQL)
@@ -176,6 +194,7 @@ extension SQLiteDatabase {
         }
         print("Successfully inserted Roulette row")
     }
+    // Helfer-Funktion zur Umwandlung von Bool zu Int
     func boolToInt(test: Bool) -> Int32 {
         if test {
             return 1
@@ -184,17 +203,11 @@ extension SQLiteDatabase {
             return 0
         }
     }
-    func charToBool(char: String) -> Bool {
-        if char == "y" {
-            return true
-        }
-        else {
-            return false
-        }
-    }
 }
 
 /// SELECT
+// Hier werden die Ergebnisse wieder aus der Datenbank geholt.
+// In der Theorie zumindest...
 extension SQLiteDatabase {
     func gamesWonAfterDoubleDown(player: Player) -> Int {
         let querySql = "SELECT count(Doubled_down) FROM \(TableNames.BlackJackGames.rawValue) WHERE Id = ? AND Status = 2;"
@@ -213,12 +226,16 @@ extension SQLiteDatabase {
                 let wonDD = sqlite3_column_int(queryStatement, 0)
                 return Int(wonDD)
     }
+    // Diese Funktion sollte die Ergebnisse für die Blackjack-Statistik-Tabelle
+    // liefern. Leider funktioniert es nicht wie es soll und da es etwas
+    // schwierig ist, nachzuvollziehen, was wo geschieht, ist es nicht leicht,
+    // den Fehler zu beheben...
     func getBlackJackStatistics(player: Player) throws -> GeneralBlackJackStatistics? {
         let generalStat = try getWinLossCounts(id: player.id)
         let insurancesPaidOut = try insurancePayouts(id: player.id)
         let bustBetsPaidOut = try bustBetPayouts(id: player.id)
         let wonDoubleDown = gamesWonAfterDoubleDown(player: player)
-        let querySql = "SELECT count(had_blackjack), count(had_triple_seven), sum(bust), sum(bank_had_blackjack), count(bi.gameNo), sum(bank_went_bust), count(bb.gameNo), sum(doubled_down) FROM (\(TableNames.BlackJackGames.rawValue) bg JOIN \(TableNames.BlackJackBustBet.rawValue) bb ON bg.GameNo = bb.GameNo) JOIN \(TableNames.BlackJackInsurance.rawValue) bi ON bg.GameNo = bi.GameNo WHERE bg.Id = ?;"
+        let querySql = "SELECT sum(had_blackjack), sum(had_triple_seven), sum(bust), sum(bank_had_blackjack), count(bi.gameNo), sum(bank_went_bust), count(bb.gameNo), sum(doubled_down) FROM (\(TableNames.BlackJackGames.rawValue) bg JOIN \(TableNames.BlackJackBustBet.rawValue) bb ON bg.GameNo = bb.GameNo) JOIN \(TableNames.BlackJackInsurance.rawValue) bi ON bg.GameNo = bi.GameNo WHERE bg.Id = ?;"
         guard let queryStatement = try? prepareStatement(sql: querySql) else {
             return nil
         }
@@ -248,6 +265,8 @@ extension SQLiteDatabase {
         extraStat.append(wonDoubleDown)
         return GeneralBlackJackStatistics(general: generalStat as! [Int], player: playerStat, bank: bankStat, extra: extraStat)
     }
+    // Spieler aus der Datenbank holen.
+    // Funktioniert einwandfrei.
     func getPlayer(name: String) throws -> CasinoGuest? {
         let querySql = "SELECT * FROM \(TableNames.Guest.rawValue) WHERE Name = ?;"
         guard let queryStatement = try? prepareStatement(sql: querySql) else {
@@ -277,6 +296,9 @@ extension SQLiteDatabase {
         }
         defer {
             sqlite3_finalize(queryStatement)
+        }
+        guard sqlite3_bind_int(queryStatement, 1, Int32(id)) == SQLITE_OK else {
+            return [Int]()
         }
         while (sqlite3_step(queryStatement) == SQLITE_ROW)  {
             outcomes.append([Int(sqlite3_column_int(queryStatement, 0)), Int(sqlite3_column_int(queryStatement, 1))])
@@ -328,6 +350,10 @@ extension SQLiteDatabase {
         
         return bustBets
     }
+    // Alle eingetragenen Spieler aus der Datenbank holen.
+    // Ist notwendig, um festzustellen, ob ein neuer Spielername schon
+    // besetzt ist. Oder um sich unter einem vorhandenen Namen einzuloggen.
+    // Funktioniert - soweit ich weiß...
     func getAllPlayerNames() throws -> [String]? {
         let querySql = "SELECT Name FROM \(TableNames.Guest.rawValue);"
         var playerNames = [String]()
@@ -368,6 +394,7 @@ extension SQLiteDatabase {
 
 /// UPDATE
 extension SQLiteDatabase {
+    // Kontostand des Spielers anpassen. Funktioniert.
     func updateBalance(player: Player) throws {
         let updateSQL = "UPDATE \(TableNames.Guest.rawValue) SET Balance = ? WHERE Id = ?"
         guard let updateStatement = try? prepareStatement(sql: updateSQL) else {
