@@ -20,11 +20,13 @@ class RouletteController: UIViewController {
     @IBOutlet weak var lBalance: UILabel!
     let minimum = 10
     var bet: RouletteBet?
+    var dbPointer: OpaquePointer?
     var guest: Player?
-    let roulette = RouletteLogicController()
+    var roulette: RouletteLogicController?
     override func viewDidLoad() {
         super.viewDidLoad()
         //print(guest?.playerName)
+        
         
         lResult.isHidden = true
         lWin.isHidden = true
@@ -40,46 +42,47 @@ class RouletteController: UIViewController {
         catch {
             print(error.localizedDescription)
         }
+        if roulette == nil && guest != nil && bet != nil {
+            roulette = RouletteLogicController(player: guest!, view: self, db: dbPointer)
+        }
         if bet == nil {
-            bRienNeVasPlus.isHidden = true
-            lBet.text = "No bet selected"
-            slStakes.isHidden = true
-            lStakes.isHidden = true
-            bSelectBet.isHidden=false        }
+            roulette!.noBetSelected()
+        }
         else {
-            bSelectBet.isHidden=true
-            if bet is OutsideBet {
-                let out = bet as! OutsideBet
-                print(out.description())
-            }
-            else if bet is InsideBet {
-                let ins = bet as! InsideBet
-                print(ins.description())
-            }
-            bRienNeVasPlus.isHidden = false
-            slStakes.value = Float(minimum)
-            slStakes.minimumValue = Float(minimum)
-            if guest!.balance < (Float((1200 * minimum) / (bet!.payout - 1))) {
-                slStakes.maximumValue = guest!.balance
-            }
-            else {
-                slStakes.maximumValue = Float((1200 * minimum) / (bet!.payout - 1))
-            }
-            lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance-slStakes.value)) $"
-            slStakes.isHidden = false
-            lStakes.text = "\(MathHelper.roundFloat(number:slStakes.value)) $"
-            lStakes.isHidden = false
-            if bet is InsideBet {
-                let b = bet as! InsideBet
-                lBet.text = "\(b.description())"
-            }
-            else if bet is OutsideBet {
-                let b = bet as! OutsideBet
-                lBet.text = "\(b.description())"
-            }
-            else {
-                lBet.text = "Something went wrong!"
-            }
+            roulette!.didSelectBet(bet: bet!)
+//            bSelectBet.isHidden=true
+//            if bet is OutsideBet {
+//                let out = bet as! OutsideBet
+//                print(out.description())
+//            }
+//            else if bet is InsideBet {
+//                let ins = bet as! InsideBet
+//                print(ins.description())
+//            }
+//            bRienNeVasPlus.isHidden = false
+//            slStakes.value = Float(minimum)
+//            slStakes.minimumValue = Float(minimum)
+//            if guest!.balance < (Float((1200 * minimum) / (bet!.payout - 1))) {
+//                slStakes.maximumValue = guest!.balance
+//            }
+//            else {
+//                slStakes.maximumValue = Float((1200 * minimum) / (bet!.payout - 1))
+//            }
+//            lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance-slStakes.value)) $"
+//            slStakes.isHidden = false
+//            lStakes.text = "\(MathHelper.roundFloat(number:slStakes.value)) $"
+//            lStakes.isHidden = false
+//            if bet is InsideBet {
+//                let b = bet as! InsideBet
+//                lBet.text = "\(b.description())"
+//            }
+//            else if bet is OutsideBet {
+//                let b = bet as! OutsideBet
+//                lBet.text = "\(b.description())"
+//            }
+//            else {
+//                lBet.text = "Something went wrong!"
+//            }
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -90,48 +93,22 @@ class RouletteController: UIViewController {
     
     @IBAction func rienNeVasPlus(_ sender: UIButton) {
         if bet != nil && sender.title(for: .normal) == "rien ne vas plus" {
-            bSelectBet.isHidden = true
-            slStakes.isHidden = true
             sender.setTitle("Play again", for: .normal)
-            guest!.balance -= slStakes.value
-            lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance)) $"
-            let result = roulette.rienNeVasPlus(bet: bet!, stakes: MathHelper.roundFloat(number: slStakes.value))
-            print(result.description())
-            if result.winningNumber.color == RouletteColor.black {
-                lResult.textColor = UIColor.black
-            }
-            else if result.winningNumber.color == RouletteColor.red {
-                lResult.textColor = UIColor.red
-            }
-            else {
-                lResult.textColor = UIColor.green
-            }
-            lResult.text = "\(result.winningNumber.number)"
-            lResult.isHidden = false
-            guest!.endRoulette(outcome: result)
-            if result.outcome {
-                lWin.text = "\(result.prize) $"
-            }
-            else {
-                lWin.text = "You lost"
-            }
-            lWin.isHidden = false
-            lBalance.text = "Balance: \(MathHelper.roundFloat(number: guest!.balance)) $"
+            roulette!.rienNeVasPlus(bet: bet!, stakes: MathHelper.roundFloat(number: slStakes.value))
+           
+           // let result = roulette!.rienNeVasPlus(bet: bet!, stakes: MathHelper.roundFloat(number: slStakes.value))
+            //print(result.description())
+            
         }
         else if sender.title(for: .normal) == "Play again" {
-            bet = nil
             sender.setTitle("rien ne vas plus", for: .normal)
             sender.isHidden = true
-            bSelectBet.isHidden = false
-            lResult.isHidden = true
-            lWin.isHidden = true
-            lBet.text = "No bet selected"
+            roulette!.playAgain()
         }
        
     }
     @IBAction func selectStakes(_ sender: UISlider) {
-        lStakes.text = "\(MathHelper.roundFloat(number: sender.value)) $"
-        lBalance.text = "Balance: \(MathHelper.roundFloat(number:guest!.balance-sender.value)) $"
+        roulette?.selectStakes()
     }
     @IBAction func selectBet(_ sender: UIButton) {
         performSegue(withIdentifier: "selectRouletteBet", sender: self)

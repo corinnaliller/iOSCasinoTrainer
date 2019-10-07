@@ -13,6 +13,7 @@ class BlackJackStatisticsController: UIViewController {
     @IBOutlet weak var statisticsTable: UITableView!
     var guest: Player?
     var dataSource: DataAnalysis
+    var dbPointer: OpaquePointer?
     override func viewDidLoad() {
         super.viewDidLoad()
 //        print(guest?.bjStats.gamesWon)
@@ -20,7 +21,7 @@ class BlackJackStatisticsController: UIViewController {
 //        print(guest?.bjStats.gamesLost)
         // Do any additional setup after loading the view.
         if guest != nil {
-            dataSource = DataAnalysis(bjstat: guest!.bjStats)
+            dataSource = DataAnalysis(dbPointer: dbPointer, player: guest!)
         }
         statisticsTable.estimatedRowHeight = 113
         statisticsTable.rowHeight = UITableView.automaticDimension
@@ -29,7 +30,7 @@ class BlackJackStatisticsController: UIViewController {
     }
     required init?(coder aDecoder: NSCoder) {
         
-        self.dataSource = DataAnalysis(bjstat: BlackJackStats())
+        self.dataSource = DataAnalysis()
         super.init(coder: aDecoder)
     }
     

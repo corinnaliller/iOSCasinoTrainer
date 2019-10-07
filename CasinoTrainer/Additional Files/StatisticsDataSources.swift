@@ -10,39 +10,72 @@ import Foundation
 import UIKit
 class DataAnalysis : NSObject {
     var bjData: [[AbsoluteAndPercent]]
+    let dbController: DatabaseController
     let headers = ["General","Player", "Bank", "Extra"]
     override init() {
         //self.selected = 0
+        self.dbController = DatabaseController(pointer: nil)
         print("Default-Init Analysis Class")
         bjData = [[AbsoluteAndPercent]]()
     }
-    init(bjstat: BlackJackStats) {
-        let bjTotal = bjstat.gamesWon+bjstat.gamesLost+bjstat.outcomes[BlackJackOutcomes.gamesTied]!
+//    init(bjstat: BlackJackStats) {
+//        let bjTotal = bjstat.gamesWon+bjstat.gamesLost+bjstat.outcomes[BlackJackOutcomes.gamesTied]!
+//        bjData = [
+//            [
+//                AbsoluteAndPercent("total",bjTotal,Float(100)),
+//                AbsoluteAndPercent("won",bjstat.gamesWon,Float(bjstat.gamesWon)/Float(bjTotal)*100),
+//                AbsoluteAndPercent("tied",bjstat.outcomes[BlackJackOutcomes.gamesTied]!, Float(bjstat.outcomes[BlackJackOutcomes.gamesTied]!)/Float(bjTotal)*100),
+//                AbsoluteAndPercent("lost",bjstat.gamesLost,Float(bjstat.gamesLost)/Float(bjTotal)*100)
+//            ],
+//            [
+//                AbsoluteAndPercent("had Black Jack", bjstat.outcomes[BlackJackOutcomes.hadBlackJack]!, Float(bjstat.outcomes[BlackJackOutcomes.hadBlackJack]!)/Float(bjTotal)*100),
+//                AbsoluteAndPercent("won with Black Jack", bjstat.outcomes[BlackJackOutcomes.wonWithBlackJack]!, Float(bjstat.outcomes[BlackJackOutcomes.wonWithBlackJack]!)/Float(bjTotal)*100),
+//                AbsoluteAndPercent("had Triple Seven", bjstat.outcomes[BlackJackOutcomes.hadTripleSeven]!, Float(bjstat.outcomes[BlackJackOutcomes.hadTripleSeven]!)/Float(bjTotal)*100),
+//                AbsoluteAndPercent("went bust", bjstat.outcomes[BlackJackOutcomes.playerWentBust]!, Float(bjstat.outcomes[BlackJackOutcomes.playerWentBust]!) / Float(bjTotal)*100)
+//            ],
+//            [
+//                AbsoluteAndPercent("Bank had Black Jack", bjstat.outcomes[BlackJackOutcomes.bankHadBlackJack]!, Float(bjstat.outcomes[BlackJackOutcomes.bankHadBlackJack]!)/Float(bjTotal)*100),
+//                AbsoluteAndPercent("Bank won with Black Jack", bjstat.outcomes[BlackJackOutcomes.bankWonWithBlackJack]!, Float(bjstat.outcomes[BlackJackOutcomes.bankWonWithBlackJack]!)/Float(bjTotal)*100),
+//                AbsoluteAndPercent("insurance was paid out", bjstat.outcomes[BlackJackOutcomes.insuranceWasPaidOut]!, Float(bjstat.outcomes[BlackJackOutcomes.insuranceWasPaidOut]!)/Float(bjstat.outcomes[BlackJackOutcomes.tookInsurance]!)*100),
+//                AbsoluteAndPercent("Bank went bust", bjstat.outcomes[BlackJackOutcomes.bankWentBust]!, Float(bjstat.outcomes[BlackJackOutcomes.bankWentBust]!)/Float(bjTotal)*100),
+//                AbsoluteAndPercent("bust bet won", bjstat.outcomes[BlackJackOutcomes.bustBetsWon]!, Float(bjstat.outcomes[BlackJackOutcomes.bustBetsWon]!)/Float(bjstat.outcomes[BlackJackOutcomes.betOnBust]!)*100)
+//            ],
+//            [
+//                AbsoluteAndPercent("doubled down", bjstat.outcomes[BlackJackOutcomes.doubledDown]!, Float(bjstat.outcomes[BlackJackOutcomes.doubledDown]!)/Float(bjTotal)*100)
+//            ]
+//        ]
+//        print("init with Player-Data")
+//    }
+    init(dbPointer: OpaquePointer?, player: Player) {
+        self.dbController = DatabaseController(pointer: dbPointer)
+        let bjstat = dbController.getBlackJackStatistics(player: player)
+        let bjTotal = bjstat!.allStats[0][.gamesWon]! + bjstat!.allStats[0][.gamesTied]! + bjstat!.allStats[0][.gamesLost]!
         bjData = [
             [
                 AbsoluteAndPercent("total",bjTotal,Float(100)),
-                AbsoluteAndPercent("won",bjstat.gamesWon,Float(bjstat.gamesWon)/Float(bjTotal)*100),
-                AbsoluteAndPercent("tied",bjstat.outcomes[BlackJackOutcomes.gamesTied]!, Float(bjstat.outcomes[BlackJackOutcomes.gamesTied]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent("lost",bjstat.gamesLost,Float(bjstat.gamesLost)/Float(bjTotal)*100)
+                AbsoluteAndPercent(BlackJackOutcomes.gamesWon.rawValue,bjstat!.allStats[0][.gamesWon]!,Float(bjstat!.allStats[0][.gamesWon]!)/Float(bjTotal)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.gamesTied.rawValue, bjstat!.allStats[0][.gamesTied]!, Float(bjstat!.allStats[0][.gamesTied]!)/Float(bjTotal)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.gamesLost.rawValue, bjstat!.allStats[0][.gamesLost]!, Float(bjstat!.allStats[0][.gamesLost]!)/Float(bjTotal)*100)
             ],
             [
-                AbsoluteAndPercent("had Black Jack", bjstat.outcomes[BlackJackOutcomes.hadBlackJack]!, Float(bjstat.outcomes[BlackJackOutcomes.hadBlackJack]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent("won with Black Jack", bjstat.outcomes[BlackJackOutcomes.wonWithBlackJack]!, Float(bjstat.outcomes[BlackJackOutcomes.wonWithBlackJack]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent("had Triple Seven", bjstat.outcomes[BlackJackOutcomes.hadTripleSeven]!, Float(bjstat.outcomes[BlackJackOutcomes.hadTripleSeven]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent("went bust", bjstat.outcomes[BlackJackOutcomes.playerWentBust]!, Float(bjstat.outcomes[BlackJackOutcomes.playerWentBust]!) / Float(bjTotal)*100)
+                AbsoluteAndPercent(BlackJackOutcomes.hadBlackJack.rawValue, bjstat!.allStats[1][.hadBlackJack]!, Float(bjstat!.allStats[1][.hadBlackJack]!)/Float(bjTotal)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.wonWithBlackJack.rawValue, bjstat!.allStats[1][.wonWithBlackJack]!, Float(bjstat!.allStats[1][.wonWithBlackJack]!)/Float(bjTotal)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.hadTripleSeven.rawValue, bjstat!.allStats[1][.hadTripleSeven]!, Float(bjstat!.allStats[1][.hadTripleSeven]!)/Float(bjTotal)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.playerWentBust.rawValue, bjstat!.allStats[1][.playerWentBust]!, Float(bjstat!.allStats[1][.playerWentBust]!) / Float(bjTotal)*100)
             ],
             [
-                AbsoluteAndPercent("Bank had Black Jack", bjstat.outcomes[BlackJackOutcomes.bankHadBlackJack]!, Float(bjstat.outcomes[BlackJackOutcomes.bankHadBlackJack]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent("Bank won with Black Jack", bjstat.outcomes[BlackJackOutcomes.bankWonWithBlackJack]!, Float(bjstat.outcomes[BlackJackOutcomes.bankWonWithBlackJack]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent("insurance was paid out", bjstat.outcomes[BlackJackOutcomes.insuranceWasPaidOut]!, Float(bjstat.outcomes[BlackJackOutcomes.insuranceWasPaidOut]!)/Float(bjstat.outcomes[BlackJackOutcomes.tookInsurance]!)*100),
-                AbsoluteAndPercent("Bank went bust", bjstat.outcomes[BlackJackOutcomes.bankWentBust]!, Float(bjstat.outcomes[BlackJackOutcomes.bankWentBust]!)/Float(bjTotal)*100),
-                AbsoluteAndPercent("bust bet won", bjstat.outcomes[BlackJackOutcomes.bustBetsWon]!, Float(bjstat.outcomes[BlackJackOutcomes.bustBetsWon]!)/Float(bjstat.outcomes[BlackJackOutcomes.betOnBust]!)*100)
+                AbsoluteAndPercent(BlackJackOutcomes.bankHadBlackJack.rawValue, bjstat!.allStats[2][.bankHadBlackJack]!, Float(bjstat!.allStats[2][.bankHadBlackJack]!)/Float(bjTotal)*100),                AbsoluteAndPercent(BlackJackOutcomes.insuranceWasPaidOut.rawValue, bjstat!.allStats[2][.insuranceWasPaidOut]!, Float(bjstat!.allStats[2][.insuranceWasPaidOut]!)/Float(bjstat!.allStats[2][.tookInsurance]!)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.bankWentBust.rawValue, bjstat!.allStats[2][.bankWentBust]!, Float(bjstat!.allStats[2][.bankWentBust]!)/Float(bjTotal)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.bustBetsWon.rawValue, bjstat!.allStats[2][.bustBetsWon]!, Float(bjstat!.allStats[2][.bustBetsWon]!)/Float(bjstat!.allStats[2][.betOnBust]!)*100)
             ],
             [
-                AbsoluteAndPercent("doubled down", bjstat.outcomes[BlackJackOutcomes.doubledDown]!, Float(bjstat.outcomes[BlackJackOutcomes.doubledDown]!)/Float(bjTotal)*100)
+                AbsoluteAndPercent(BlackJackOutcomes.doubledDown.rawValue, bjstat!.allStats[3][.doubledDown]!, Float(bjstat!.allStats[3][.doubledDown]!)/Float(bjTotal)*100),
+                AbsoluteAndPercent(BlackJackOutcomes.wonAfterDoubleDown.rawValue, bjstat!.allStats[3][.wonAfterDoubleDown]!, Float(bjstat!.allStats[3][.wonAfterDoubleDown]!)/Float(bjstat!.allStats[3][.doubledDown]!))
             ]
         ]
         print("init with Player-Data")
+        
+        
     }
 }
 extension DataAnalysis : UITableViewDataSource {
@@ -57,7 +90,7 @@ extension DataAnalysis : UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: StatisticsCell.self)) as! StatisticsCell
-        print("section: \(indexPath.section), row: \(indexPath.row)")
+        //print("section: \(indexPath.section), row: \(indexPath.row)")
         let strings = bjData[indexPath.section][indexPath.row]
         cell.labelText = strings.name
         cell.absoluteText = strings.absoluteString
@@ -120,35 +153,35 @@ extension RouletteDataAnalysis : UITableViewDataSource {
     
 }
 
-class MetaDataAnalysis : NSObject {
-    var metaData = [MetaData]()
-    
-    init(guest: Player) {
-        metaData = [
-            MetaData(text: "Won alltogether", MathHelper.roundFloat(number: guest.balance - guest.initialCapital)),
-            MetaData(text: "Won at Black Jack", guest.bjStats.winsAndLosses.reduce(0,+)),
-            MetaData(text: "Won at Roulette", guest.rouStats.winsAndLosses.reduce(0,+)),
-            MetaData(text: "Average Black Jack Stakes", MathHelper.roundFloat(number: guest.bjStats.allStakes.reduce(0,+)/Float(guest.bjStats.allStakes.count))),
-            MetaData(text: "Average Roulette Stakes", guest.rouStats.allStakes.reduce(0,+) / Float(guest.rouStats.allStakes.count)),
-            MetaData(text: "Average Black Jack Wins", MathHelper.roundFloat(number: guest.bjStats.winsAndLosses.reduce(0,+)/Float(guest.bjStats.winsAndLosses.count))),
-            MetaData(text: "Average Roulette Wins", MathHelper.roundFloat(number: guest.rouStats.winsAndLosses.reduce(0,+)/Float(guest.rouStats.winsAndLosses.count))),
-            MetaData(text: "Average Insurance Payouts (Black Jack)", guest.bjStats.insurances.reduce(0,+)/Float(guest.bjStats.insurances.count)),
-            MetaData(text: "Average Bust Bet Payout", guest.bjStats.bustBets.reduce(0, +)/Float(guest.bjStats.bustBets.count))
-        ]
-    }
-}
-extension MetaDataAnalysis : UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return metaData.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: MetaStatisticsCell.self)) as! MetaStatisticsCell
-        let strings = metaData[indexPath.row]
-        cell.labelText = strings.name
-        cell.absoluteText = strings.numberString
-        return cell
-    }
-    
-    
-}
+//class MetaDataAnalysis : NSObject {
+//    var metaData = [MetaData]()
+//    
+//    init(guest: Player) {
+//        metaData = [
+//            MetaData(text: "Won alltogether", MathHelper.roundFloat(number: guest.balance - guest.initialCapital)),
+//            MetaData(text: "Won at Black Jack", guest.bjStats.winsAndLosses.reduce(0,+)),
+//            MetaData(text: "Won at Roulette", guest.rouStats.winsAndLosses.reduce(0,+)),
+//            MetaData(text: "Average Black Jack Stakes", MathHelper.roundFloat(number: guest.bjStats.allStakes.reduce(0,+)/Float(guest.bjStats.allStakes.count))),
+//            MetaData(text: "Average Roulette Stakes", guest.rouStats.allStakes.reduce(0,+) / Float(guest.rouStats.allStakes.count)),
+//            MetaData(text: "Average Black Jack Wins", MathHelper.roundFloat(number: guest.bjStats.winsAndLosses.reduce(0,+)/Float(guest.bjStats.winsAndLosses.count))),
+//            MetaData(text: "Average Roulette Wins", MathHelper.roundFloat(number: guest.rouStats.winsAndLosses.reduce(0,+)/Float(guest.rouStats.winsAndLosses.count))),
+//            MetaData(text: "Average Insurance Payouts (Black Jack)", guest.bjStats.insurances.reduce(0,+)/Float(guest.bjStats.insurances.count)),
+//            MetaData(text: "Average Bust Bet Payout", guest.bjStats.bustBets.reduce(0, +)/Float(guest.bjStats.bustBets.count))
+//        ]
+//    }
+//}
+//extension MetaDataAnalysis : UITableViewDataSource {
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return metaData.count
+//    }
+//    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: MetaStatisticsCell.self)) as! MetaStatisticsCell
+//        let strings = metaData[indexPath.row]
+//        cell.labelText = strings.name
+//        cell.absoluteText = strings.numberString
+//        return cell
+//    }
+//    
+//    
+//}
